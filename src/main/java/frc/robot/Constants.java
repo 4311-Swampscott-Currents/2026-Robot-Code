@@ -28,4 +28,29 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+ 
+
+  
+
+  public static final class MotorIDs{
+    //motor ids
+    public static final int RIGHT_SHOOTER_MOTOR_ID = 15;
+    public static final int LEFT_SHOOTER_MOTOR_ID = 16;
+    public static final int KICKER_MOTOR_ID = 17;
+    public static final int PROCESSOR_MOTOR_ID = 18;
+    public static final int INTAKE_ARM_MOTOR_ID = 19;
+    public static final int INTAKE_WHEELs_MOTOR_ID = 20;
+    public static final int CLIMBER_MOTOR_ID = 21;
+    
+
+
+  }
+  
+  
+  
+  
+  
+  
+
 }
