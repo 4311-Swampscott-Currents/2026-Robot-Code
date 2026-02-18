@@ -119,7 +119,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-
     shooter = new Shooter();
     // Configure the button bindings
     configureButtonBindings();
@@ -163,7 +162,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    controller.rightTrigger().onTrue(shooter.shootCommand());
+
+    // controller.rightTrigger().onTrue(shooter.shootCommand());
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
