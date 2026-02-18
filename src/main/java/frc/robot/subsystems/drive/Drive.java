@@ -64,7 +64,6 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
-
   public static final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
   public static final NetworkTable limelightTable = ntInstance.getTable("limelight");
   public static double tx;
@@ -219,11 +218,9 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
-    //update
+    // update
     this.updateOdometry();
   }
-
-  
 
   /**
    * Runs the drive at the desired velocity.
@@ -374,76 +371,66 @@ public class Drive extends SubsystemBase {
     };
   }
 
-  //updates position based on vision
+  // updates position based on vision
   public void updateOdometry() {
     poseEstimator.update(
-      rawGyroRotation,
+        rawGyroRotation,
         new SwerveModulePosition[] {
-          modules[0].getPosition(), //fl
-          modules[1].getPosition(), //fr
-          modules[2].getPosition(), //bl
-          modules[3].getPosition() //br
+          modules[0].getPosition(), // fl
+          modules[1].getPosition(), // fr
+          modules[2].getPosition(), // bl
+          modules[3].getPosition() // br
         });
 
-
-    boolean useMegaTag2 = true; //set to false to use MegaTag1
+    boolean useMegaTag2 = true; // set to false to use MegaTag1
     boolean doRejectUpdate = false;
 
-    //checks if limelight is connected
+    // checks if limelight is connected
     isConnected = limelightTable.getEntry("tv").exists();
 
-
-    if(useMegaTag2 == false)
-    {
+    if (useMegaTag2 == false) {
       LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-      
-      if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
-      {
-        if(mt1.rawFiducials[0].ambiguity > .7)
-        {
+
+      if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+        if (mt1.rawFiducials[0].ambiguity > .7) {
           doRejectUpdate = true;
         }
-        if(mt1.rawFiducials[0].distToCamera > 3)
-        {
+        if (mt1.rawFiducials[0].distToCamera > 3) {
           doRejectUpdate = true;
         }
       }
-      if(mt1.tagCount == 0)
-      {
+      if (mt1.tagCount == 0) {
         doRejectUpdate = true;
       }
 
-      if(!doRejectUpdate)
-      {
-        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
-        poseEstimator.addVisionMeasurement(
-            mt1.pose,
-            mt1.timestampSeconds);
+      if (!doRejectUpdate) {
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+        poseEstimator.addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
       }
-    }
-    else if (useMegaTag2 == true)
-    {
-      LimelightHelpers.SetRobotOrientation("limelight", poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-      if(Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+    } else if (useMegaTag2 == true) {
+      LimelightHelpers.SetRobotOrientation(
+          "limelight",
+          poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+          0,
+          0,
+          0,
+          0,
+          0);
+      LimelightHelpers.PoseEstimate mt2 =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+      if (Math.abs(gyroInputs.yawVelocityRadPerSec)
+          > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision
+      // updates
       {
         doRejectUpdate = true;
       }
-      if(mt2.tagCount == 0 || mt2 == null)
-      {
+      if (mt2.tagCount == 0 || mt2 == null) {
         doRejectUpdate = true;
       }
-      if(!doRejectUpdate)
-      {
-        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-        poseEstimator.addVisionMeasurement(
-            mt2.pose,
-            mt2.timestampSeconds);
+      if (!doRejectUpdate) {
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+        poseEstimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
       }
     }
   }
-
-
-
-
 }
