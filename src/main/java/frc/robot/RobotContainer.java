@@ -37,6 +37,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Shooter shooter;
+
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -162,8 +163,6 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-
-    // controller.rightTrigger().onTrue(shooter.shootCommand());
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

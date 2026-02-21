@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -147,6 +149,48 @@ public final class Constants {
     // Roller is lightly loaded but can spike on ball contact
     public static final double STATOR_CURRENT_LIMIT = 40.0;
     public static final double SUPPLY_CURRENT_LIMIT = 30.0;
+  }
+
+  // -----------------------------------------------------------------------
+  // Vision
+  // -----------------------------------------------------------------------
+  public static final class Vision {
+    public static final String LIMELIGHT_NAME = "limelight";
+
+    // Camera physical properties — measure on the real robot
+    public static final double CAMERA_HEIGHT_METERS = 0.4; // meters off ground
+    public static final double CAMERA_PITCH_DEGREES = 15.0; // upward tilt — MEASURE!
+
+    // Height of the scoring target center in meters off the ground.
+    public static final double TARGET_HEIGHT_METERS = Units.inchesToMeters(44.25);
+
+    public static final double HUB_HALF_DEPTH_METERS = 1.194 / 2.0; // 0.597m
+
+    // ── Alliance-specific AprilTag IDs ───────────────────────────────
+    // Update these from the 2026 field layout in the game manual.
+    // Each alliance's scoring target has a unique tag ID.
+    public static final int RED_ALLIANCE_TARGET_TAG_ID = 10; // double-check id
+    public static final int BLUE_ALLIANCE_TARGET_TAG_ID = 26; // double-check id
+
+    // ── Alliance-specific target field positions ─────────────────────
+    // WPILib field coordinate system: origin = blue alliance corner.
+    // x = toward red alliance wall, y = toward blue alliance left wall.
+    // Update these from the 2026 game manual field layout.
+    public static final Translation2d RED_TARGET_FIELD_POSITION =
+        new Translation2d(12.51, 4.035); // placeholder — update!
+    public static final Translation2d BLUE_TARGET_FIELD_POSITION =
+        new Translation2d(4.03, 4.035); // placeholder — update!
+
+    public static final int[] ALL_TAG_IDS = {
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+      27, 28, 29, 30, 31, 32
+    };
+
+    // Kalman filter standard deviations for MegaTag 2 vision updates
+    // in Drive.updateOdometry(). Lower = trust vision more.
+    // Tune by watching pose on AdvantageScope — if it jumps, increase these.
+    // public static final double XY_STD_DEV_BASE  = 0.5;  // meters
+    // public static final double ROT_STD_DEV_BASE = 0.9;  // radians
   }
 
   // -----------------------------------------------------------------------
