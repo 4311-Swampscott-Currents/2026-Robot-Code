@@ -14,11 +14,18 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoAimCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.IntakeArm;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -37,6 +44,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Shooter shooter;
+  private final IntakeArm intakeArm;
+  private final IntakeRoller intakeRoller;
+  private final Hopper hopper;
+  private final Kicker kicker;
+  private final Vision vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -120,7 +132,14 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    // Instantiate subsystems
     shooter = new Shooter();
+    intakeArm = new IntakeArm();
+    intakeRoller = new IntakeRoller();
+    hopper = new Hopper();
+    kicker = new Kicker();
+    vision = new Vision(drive);
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -139,6 +158,17 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+
+    // Auto-aim and shoot while holding left bumper
+    controller
+        .leftBumper()
+        .whileTrue(
+            AutoAimCommands.autoAimPoseBased(
+                drive,
+                vision,
+                shooter,
+                () -> -controller.getLeftY(),
+                () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
     controller
@@ -163,6 +193,19 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+
+    // Shoot while holding right bumper
+    controller
+        .rightBumper()
+        .whileTrue(new RunCommand(() -> kicker.kick(), kicker))
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  shooter.stop();
+                  kicker.stop();
+                },
+                shooter,
+                kicker));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

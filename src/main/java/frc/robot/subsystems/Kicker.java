@@ -19,16 +19,16 @@ import frc.robot.Constants;
  */
 public class Kicker extends SubsystemBase {
 
-  private final TalonFX kickerMotor = new TalonFX(Constants.Kicker.M_KICKER_ID);
+  private final TalonFX kickerMotor = new TalonFX(Constants.KickerConstants.M_KICKER_ID);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
 
   public Kicker() {
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     // --- Current Limits ---
-    config.CurrentLimits.StatorCurrentLimit = Constants.Kicker.STATOR_CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = Constants.KickerConstants.STATOR_CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = Constants.Kicker.SUPPLY_CURRENT_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.KickerConstants.SUPPLY_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // Brake: prevents coasting from accidentally feeding a ball
@@ -39,7 +39,7 @@ public class Kicker extends SubsystemBase {
 
   /** Run kicker at full speed to feed a ball. */
   public void kick() {
-    kickerMotor.setControl(dutyCycleRequest.withOutput(Constants.Kicker.KICK_PERCENT));
+    kickerMotor.setControl(dutyCycleRequest.withOutput(Constants.KickerConstants.KICK_PERCENT));
   }
 
   /** Run at a custom duty cycle. Negative = reverse (unjam). */

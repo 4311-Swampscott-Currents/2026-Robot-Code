@@ -18,16 +18,16 @@ import frc.robot.Constants;
  */
 public class Hopper extends SubsystemBase {
 
-  private final TalonFX conveyorMotor = new TalonFX(Constants.Hopper.M_HOPPER_ID);
+  private final TalonFX conveyorMotor = new TalonFX(Constants.HopperConstants.M_HOPPER_ID);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
 
   public Hopper() {
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     // --- Current Limits ---
-    config.CurrentLimits.StatorCurrentLimit = Constants.Hopper.STATOR_CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = Constants.HopperConstants.STATOR_CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = Constants.Hopper.SUPPLY_CURRENT_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.HopperConstants.SUPPLY_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // Brake: balls don't roll back when conveyor stops
@@ -37,11 +37,13 @@ public class Hopper extends SubsystemBase {
   }
 
   public void runForward() {
-    conveyorMotor.setControl(dutyCycleRequest.withOutput(Constants.Hopper.FORWARD_PERCENT));
+    conveyorMotor.setControl(
+        dutyCycleRequest.withOutput(Constants.HopperConstants.FORWARD_PERCENT));
   }
 
   public void runReverse() {
-    conveyorMotor.setControl(dutyCycleRequest.withOutput(Constants.Hopper.REVERSE_PERCENT));
+    conveyorMotor.setControl(
+        dutyCycleRequest.withOutput(Constants.HopperConstants.REVERSE_PERCENT));
   }
 
   public void runPercent(double percent) {

@@ -33,8 +33,8 @@ public class Shooter extends SubsystemBase {
   // -----------------------------------------------------------------------
   // Hardware
   // -----------------------------------------------------------------------
-  private final TalonFX m_rightShooter = new TalonFX(Constants.Shooter.M_RIGHT_SHOOTER_ID);
-  private final TalonFX m_leftShooter = new TalonFX(Constants.Shooter.M_LEFT_SHOOTER_ID);
+  private final TalonFX m_rightShooter = new TalonFX(Constants.ShooterConstants.M_RIGHT_SHOOTER_ID);
+  private final TalonFX m_leftShooter = new TalonFX(Constants.ShooterConstants.M_LEFT_SHOOTER_ID);
 
   // Command only the top motor — bottom follows automatically
   private final VelocityVoltage velocityRequest =
@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
   // Follower request: copies top motor output, but opposes direction
   // because the motors are physically mounted facing each other
   private final Follower followerRequest =
-      new Follower(Constants.Shooter.M_RIGHT_SHOOTER_ID, MotorAlignmentValue.Opposed);
+      new Follower(Constants.ShooterConstants.M_RIGHT_SHOOTER_ID, MotorAlignmentValue.Opposed);
 
   private double targetRPS = 0.0;
 
@@ -54,18 +54,18 @@ public class Shooter extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     // --- Velocity PID (Slot 0) ---
-    config.Slot0.kP = Constants.Shooter.kP;
-    config.Slot0.kI = Constants.Shooter.kI;
-    config.Slot0.kD = Constants.Shooter.kD;
-    config.Slot0.kS = Constants.Shooter.kS;
-    config.Slot0.kV = Constants.Shooter.kV;
+    config.Slot0.kP = Constants.ShooterConstants.kP;
+    config.Slot0.kI = Constants.ShooterConstants.kI;
+    config.Slot0.kD = Constants.ShooterConstants.kD;
+    config.Slot0.kS = Constants.ShooterConstants.kS;
+    config.Slot0.kV = Constants.ShooterConstants.kV;
 
     // --- Current Limits ---
     // Stator: limits motor winding current → prevents overheating
-    config.CurrentLimits.StatorCurrentLimit = Constants.Shooter.STATOR_CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = Constants.ShooterConstants.STATOR_CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     // Supply: limits current drawn from battery → protects wiring/breaker
-    config.CurrentLimits.SupplyCurrentLimit = Constants.Shooter.SUPPLY_CURRENT_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.ShooterConstants.SUPPLY_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // Coast so flywheels spin down naturally — never brake a spinning flywheel
@@ -120,7 +120,7 @@ public class Shooter extends SubsystemBase {
    */
   public boolean atSetpoint() {
     double error = Math.abs(m_rightShooter.getClosedLoopError().getValueAsDouble());
-    return targetRPS > 0 && error < Constants.Shooter.TOLERANCE_RPS;
+    return targetRPS > 0 && error < Constants.ShooterConstants.TOLERANCE_RPS;
   }
 
   public boolean isRunning() {

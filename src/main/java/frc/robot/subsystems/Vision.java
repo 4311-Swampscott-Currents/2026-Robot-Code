@@ -59,9 +59,9 @@ public class Vision extends SubsystemBase {
   public int getTargetTagID() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-      return Constants.Vision.RED_ALLIANCE_TARGET_TAG_ID;
+      return Constants.VisionConstants.RED_ALLIANCE_TARGET_TAG_ID;
     }
-    return Constants.Vision.BLUE_ALLIANCE_TARGET_TAG_ID;
+    return Constants.VisionConstants.BLUE_ALLIANCE_TARGET_TAG_ID;
   }
 
   /**
@@ -71,9 +71,9 @@ public class Vision extends SubsystemBase {
   private Translation2d getTargetFieldPosition() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-      return Constants.Vision.RED_TARGET_FIELD_POSITION;
+      return Constants.VisionConstants.RED_TARGET_FIELD_POSITION;
     }
-    return Constants.Vision.BLUE_TARGET_FIELD_POSITION;
+    return Constants.VisionConstants.BLUE_TARGET_FIELD_POSITION;
   }
 
   // -----------------------------------------------------------------------
@@ -89,7 +89,7 @@ public class Vision extends SubsystemBase {
    */
   public void enableTargetTagFilter() {
     LimelightHelpers.SetFiducialIDFiltersOverride(
-        Constants.Vision.LIMELIGHT_NAME, new int[] {getTargetTagID()});
+        Constants.VisionConstants.LIMELIGHT_NAME, new int[] {getTargetTagID()});
   }
 
   /**
@@ -98,7 +98,7 @@ public class Vision extends SubsystemBase {
    */
   public void disableTargetTagFilter() {
     LimelightHelpers.SetFiducialIDFiltersOverride(
-        Constants.Vision.LIMELIGHT_NAME, Constants.Vision.ALL_TAG_IDS);
+        Constants.VisionConstants.LIMELIGHT_NAME, Constants.VisionConstants.ALL_TAG_IDS);
   }
 
   // -----------------------------------------------------------------------
@@ -115,8 +115,8 @@ public class Vision extends SubsystemBase {
    * heading rather than rotating blindly.
    */
   public boolean hasTarget() {
-    if (!LimelightHelpers.getTV(Constants.Vision.LIMELIGHT_NAME)) return false;
-    int trackedID = (int) LimelightHelpers.getFiducialID(Constants.Vision.LIMELIGHT_NAME);
+    if (!LimelightHelpers.getTV(Constants.VisionConstants.LIMELIGHT_NAME)) return false;
+    int trackedID = (int) LimelightHelpers.getFiducialID(Constants.VisionConstants.LIMELIGHT_NAME);
     return trackedID == getTargetTagID();
   }
 
@@ -125,7 +125,7 @@ public class Vision extends SubsystemBase {
    * diagnostics — aiming uses getAngleToTarget() instead.
    */
   public double getTX() {
-    return LimelightHelpers.getTX(Constants.Vision.LIMELIGHT_NAME);
+    return LimelightHelpers.getTX(Constants.VisionConstants.LIMELIGHT_NAME);
   }
 
   /**
@@ -133,7 +133,7 @@ public class Vision extends SubsystemBase {
    * distance fallback.
    */
   public double getTY() {
-    return LimelightHelpers.getTY(Constants.Vision.LIMELIGHT_NAME);
+    return LimelightHelpers.getTY(Constants.VisionConstants.LIMELIGHT_NAME);
   }
 
   /**
@@ -141,7 +141,7 @@ public class Vision extends SubsystemBase {
    * getTargetTagID() during testing.
    */
   public int getTrackedTagID() {
-    return (int) LimelightHelpers.getFiducialID(Constants.Vision.LIMELIGHT_NAME);
+    return (int) LimelightHelpers.getFiducialID(Constants.VisionConstants.LIMELIGHT_NAME);
   }
 
   // -----------------------------------------------------------------------
@@ -224,7 +224,8 @@ public class Vision extends SubsystemBase {
     double offsetDegrees = 0.0;
     double distance = getDistanceMeters();
     if (distance > 0.1) {
-      offsetDegrees = Math.toDegrees(Math.atan(Constants.Vision.HUB_HALF_DEPTH_METERS / distance));
+      offsetDegrees =
+          Math.toDegrees(Math.atan(Constants.VisionConstants.HUB_HALF_DEPTH_METERS / distance));
     }
 
     // Apply tx + depth offset to current heading.
@@ -258,11 +259,12 @@ public class Vision extends SubsystemBase {
 
     // Fallback: ty-based geometry
     double ty = getTY();
-    double angleRadians = Math.toRadians(Constants.Vision.CAMERA_PITCH_DEGREES + ty);
+    double angleRadians = Math.toRadians(Constants.VisionConstants.CAMERA_PITCH_DEGREES + ty);
 
     if (Math.abs(angleRadians) < 1e-6) return 0.0;
 
-    return (Constants.Vision.TARGET_HEIGHT_METERS - Constants.Vision.CAMERA_HEIGHT_METERS)
+    return (Constants.VisionConstants.TARGET_HEIGHT_METERS
+            - Constants.VisionConstants.CAMERA_HEIGHT_METERS)
         / Math.tan(angleRadians);
   }
 
@@ -274,7 +276,7 @@ public class Vision extends SubsystemBase {
     double distance = getDistanceMeters();
     double txOffsetDegrees =
         (distance > 0.1)
-            ? Math.toDegrees(Math.atan(Constants.Vision.HUB_HALF_DEPTH_METERS / distance))
+            ? Math.toDegrees(Math.atan(Constants.VisionConstants.HUB_HALF_DEPTH_METERS / distance))
             : 0.0; // if else statement
 
     SmartDashboard.putBoolean("Vision/HasTarget", hasTarget());

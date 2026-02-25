@@ -41,9 +41,9 @@ public class IntakeArm extends SubsystemBase {
   // -----------------------------------------------------------------------
   // Hardware
   // -----------------------------------------------------------------------
-  private final TalonFX m_IntakeArm = new TalonFX(Constants.IntakeArm.M_Intake_Arm_ID);
+  private final TalonFX m_IntakeArm = new TalonFX(Constants.IntakeArmConstants.M_Intake_Arm_ID);
   private final DutyCycleEncoder throughBoreEncoder =
-      new DutyCycleEncoder(Constants.IntakeArm.THROUGH_BORE_DIO_PORT);
+      new DutyCycleEncoder(Constants.IntakeArmConstants.THROUGH_BORE_DIO_PORT);
 
   private final MotionMagicVoltage motionMagicRequest =
       new MotionMagicVoltage(0).withSlot(0) /*.withEnableFOC(true)*/;
@@ -52,9 +52,9 @@ public class IntakeArm extends SubsystemBase {
   // Arm position presets
   // -----------------------------------------------------------------------
   public enum ArmPosition {
-    STOW(Constants.IntakeArm.STOW_ROTATIONS),
-    DEPLOY(Constants.IntakeArm.DEPLOY_ROTATIONS),
-    GROUND(Constants.IntakeArm.GROUND_ROTATIONS);
+    STOW(Constants.IntakeArmConstants.STOW_ROTATIONS),
+    DEPLOY(Constants.IntakeArmConstants.DEPLOY_ROTATIONS),
+    GROUND(Constants.IntakeArmConstants.GROUND_ROTATIONS);
 
     public final double rotations;
 
@@ -77,43 +77,48 @@ public class IntakeArm extends SubsystemBase {
   // Configuration
   // -----------------------------------------------------------------------
   private void configurePivotMotor() {
-    TalonFXConfiguration cfg = new TalonFXConfiguration();
+    TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
 
     // --- Slot 0: MotionMagic PID + Gravity Feedforward ---
-    cfg.Slot0.kP = Constants.IntakeArm.kP;
-    cfg.Slot0.kI = Constants.IntakeArm.kI;
-    cfg.Slot0.kD = Constants.IntakeArm.kD;
-    cfg.Slot0.kS = Constants.IntakeArm.kS;
-    cfg.Slot0.kG = Constants.IntakeArm.kG;
-    cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    motorConfiguration.Slot0.kP = Constants.IntakeArmConstants.kP;
+    motorConfiguration.Slot0.kI = Constants.IntakeArmConstants.kI;
+    motorConfiguration.Slot0.kD = Constants.IntakeArmConstants.kD;
+    motorConfiguration.Slot0.kS = Constants.IntakeArmConstants.kS;
+    motorConfiguration.Slot0.kG = Constants.IntakeArmConstants.kG;
+    motorConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
     // --- MotionMagic Profile ---
-    cfg.MotionMagic.MotionMagicCruiseVelocity = Constants.IntakeArm.MM_CRUISE_VEL;
-    cfg.MotionMagic.MotionMagicAcceleration = Constants.IntakeArm.MM_ACCELERATION;
-    cfg.MotionMagic.MotionMagicJerk = Constants.IntakeArm.MM_JERK;
+    motorConfiguration.MotionMagic.MotionMagicCruiseVelocity =
+        Constants.IntakeArmConstants.MM_CRUISE_VEL;
+    motorConfiguration.MotionMagic.MotionMagicAcceleration =
+        Constants.IntakeArmConstants.MM_ACCELERATION;
+    motorConfiguration.MotionMagic.MotionMagicJerk = Constants.IntakeArmConstants.MM_JERK;
 
     // --- Feedback: TalonFX internal encoder, seeded from Through Bore ---
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    cfg.Feedback.SensorToMechanismRatio = Constants.IntakeArm.GEAR_RATIO;
-
+    motorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    motorConfiguration.Feedback.SensorToMechanismRatio = Constants.IntakeArmConstants.GEAR_RATIO;
     // --- Current Limits ---
     // Higher than kicker/hopper because the arm needs real torque
-    cfg.CurrentLimits.StatorCurrentLimit = Constants.IntakeArm.STATOR_CURRENT_LIMIT;
-    cfg.CurrentLimits.StatorCurrentLimitEnable = true;
-    cfg.CurrentLimits.SupplyCurrentLimit = Constants.IntakeArm.SUPPLY_CURRENT_LIMIT;
-    cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
+    motorConfiguration.CurrentLimits.StatorCurrentLimit =
+        Constants.IntakeArmConstants.STATOR_CURRENT_LIMIT;
+    motorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    motorConfiguration.CurrentLimits.SupplyCurrentLimit =
+        Constants.IntakeArmConstants.SUPPLY_CURRENT_LIMIT;
+    motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // --- Soft Limits ---
     // VERIFY these on the real robot before running closed-loop!
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.IntakeArm.MAX_ROTATIONS;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.IntakeArm.MIN_ROTATIONS;
+    motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        Constants.IntakeArmConstants.MAX_ROTATIONS;
+    motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        Constants.IntakeArmConstants.MIN_ROTATIONS;
 
     // Brake: holds position when idle, resists gravity
-    cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    m_IntakeArm.getConfigurator().apply(cfg);
+    m_IntakeArm.getConfigurator().apply(motorConfiguration);
   }
 
   // -----------------------------------------------------------------------
@@ -147,7 +152,7 @@ public class IntakeArm extends SubsystemBase {
    */
   public boolean atSetpoint() {
     return Math.abs(m_IntakeArm.getClosedLoopError().getValueAsDouble())
-        < Constants.IntakeArm.TOLERANCE_ROT;
+        < Constants.IntakeArmConstants.TOLERANCE_ROT;
   }
 
   /** Arm position in mechanism rotations (what MotionMagic uses). */
@@ -162,9 +167,9 @@ public class IntakeArm extends SubsystemBase {
   public double getAbsolutePositionRotations() {
     double raw = throughBoreEncoder.get(); // 0.0–1.0 over one rotation of the arm shaft
 
-    if (Constants.IntakeArm.ENCODER_INVERTED) raw = 1.0 - raw;
+    if (Constants.IntakeArmConstants.ENCODER_INVERTED) raw = 1.0 - raw;
 
-    double adjusted = raw - Constants.IntakeArm.ENCODER_OFFSET;
+    double adjusted = raw - Constants.IntakeArmConstants.ENCODER_OFFSET;
 
     // Normalize around 0 to handle wrap-around at the 0/1 boundary
     while (adjusted < -0.5) adjusted += 1.0;

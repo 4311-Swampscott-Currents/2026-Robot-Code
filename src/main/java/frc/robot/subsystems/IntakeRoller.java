@@ -20,16 +20,17 @@ import frc.robot.Constants;
  */
 public class IntakeRoller extends SubsystemBase {
 
-  private final TalonFX rollerMotor = new TalonFX(Constants.IntakeRoller.M_Intake_Roller_ID);
+  private final TalonFX rollerMotor =
+      new TalonFX(Constants.IntakeRollerConstants.M_Intake_Roller_ID);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
 
   public IntakeRoller() {
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     // --- Current Limits ---
-    config.CurrentLimits.StatorCurrentLimit = Constants.IntakeRoller.STATOR_CURRENT_LIMIT;
+    config.CurrentLimits.StatorCurrentLimit = Constants.IntakeRollerConstants.STATOR_CURRENT_LIMIT;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = Constants.IntakeRoller.SUPPLY_CURRENT_LIMIT;
+    config.CurrentLimits.SupplyCurrentLimit = Constants.IntakeRollerConstants.SUPPLY_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // Coast: roller doesn't need to hold position
@@ -39,11 +40,13 @@ public class IntakeRoller extends SubsystemBase {
   }
 
   public void intake() {
-    rollerMotor.setControl(dutyCycleRequest.withOutput(Constants.IntakeRoller.INTAKE_PERCENT));
+    rollerMotor.setControl(
+        dutyCycleRequest.withOutput(Constants.IntakeRollerConstants.INTAKE_PERCENT));
   }
 
   public void eject() {
-    rollerMotor.setControl(dutyCycleRequest.withOutput(Constants.IntakeRoller.EJECT_PERCENT));
+    rollerMotor.setControl(
+        dutyCycleRequest.withOutput(Constants.IntakeRollerConstants.EJECT_PERCENT));
   }
 
   public void runPercent(double percent) {

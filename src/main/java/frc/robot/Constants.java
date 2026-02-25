@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import java.util.TreeMap;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -31,10 +32,17 @@ public final class Constants {
     REPLAY
   }
 
+  // canBus's
+  public static class CANBus {
+    // public static final String RIO_CANBUS = "";
+    // public static final CANBus Rio_CANBUS = new CANBus("rio", CANBus.roboRIO("rio"));
+    public static final String DRIVETRAIN_CANBUS = "Default Name";
+  }
+
   // -----------------------------------------------------------------------
   // Shooter
   // -----------------------------------------------------------------------
-  public static final class Shooter {
+  public static final class ShooterConstants {
     public static final int M_RIGHT_SHOOTER_ID = 10;
     public static final int M_LEFT_SHOOTER_ID = 11;
 
@@ -59,7 +67,7 @@ public final class Constants {
   // -----------------------------------------------------------------------
   // Kicker
   // -----------------------------------------------------------------------
-  public static final class Kicker {
+  public static final class KickerConstants {
     public static final int M_KICKER_ID = 12;
     public static final double KICK_PERCENT = 1.0;
 
@@ -73,7 +81,7 @@ public final class Constants {
   // -----------------------------------------------------------------------
   // Hopper / Conveyor
   // -----------------------------------------------------------------------
-  public static final class Hopper {
+  public static final class HopperConstants {
     public static final int M_HOPPER_ID = 13;
     public static final double FORWARD_PERCENT = 0.6;
     public static final double REVERSE_PERCENT = -0.4;
@@ -87,7 +95,7 @@ public final class Constants {
   // -----------------------------------------------------------------------
   // Intake Arm (pivot)
   // -----------------------------------------------------------------------
-  public static final class IntakeArm {
+  public static final class IntakeArmConstants {
     public static final int M_Intake_Arm_ID = 20;
 
     // REV Through Bore Encoder → RoboRIO DIO port
@@ -140,7 +148,7 @@ public final class Constants {
   // -----------------------------------------------------------------------
   // Intake Roller
   // -----------------------------------------------------------------------
-  public static final class IntakeRoller {
+  public static final class IntakeRollerConstants {
     public static final int M_Intake_Roller_ID = 22;
     public static final double INTAKE_PERCENT = 0.8;
     public static final double EJECT_PERCENT = -0.5;
@@ -154,11 +162,12 @@ public final class Constants {
   // -----------------------------------------------------------------------
   // Vision
   // -----------------------------------------------------------------------
-  public static final class Vision {
+  public static final class VisionConstants {
     public static final String LIMELIGHT_NAME = "limelight";
 
     // Camera physical properties — measure on the real robot
-    public static final double CAMERA_HEIGHT_METERS = 0.4; // meters off ground
+    public static final double CAMERA_HEIGHT_METERS =
+        0.4; // meters off ground *needs to be updated!
     public static final double CAMERA_PITCH_DEGREES = 15.0; // upward tilt — MEASURE!
 
     // Height of the scoring target center in meters off the ground.
@@ -177,9 +186,9 @@ public final class Constants {
     // x = toward red alliance wall, y = toward blue alliance left wall.
     // Update these from the 2026 game manual field layout.
     public static final Translation2d RED_TARGET_FIELD_POSITION =
-        new Translation2d(12.51, 4.035); // placeholder — update!
+        new Translation2d(11.915, 4.035); // double check
     public static final Translation2d BLUE_TARGET_FIELD_POSITION =
-        new Translation2d(4.03, 4.035); // placeholder — update!
+        new Translation2d(4.625, 4.035); // double check
 
     public static final int[] ALL_TAG_IDS = {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
@@ -191,6 +200,56 @@ public final class Constants {
     // Tune by watching pose on AdvantageScope — if it jumps, increase these.
     // public static final double XY_STD_DEV_BASE  = 0.5;  // meters
     // public static final double ROT_STD_DEV_BASE = 0.9;  // radians
+  }
+
+  // -----------------------------------------------------------------------
+  // Auto Aim
+  // -----------------------------------------------------------------------
+  public static final class AutoAim {
+
+    // Rotation ProfiledPID gains
+    // Input: tx in degrees. Output: degrees/sec.
+    // Start with kP = 0.05, increase until robot aims without oscillating.
+    // Not needed since using Drive's built-in heading lock, but you could use these to add a
+    // separate rotation command if you wanted.
+    public static final double ROTATION_kP = 0.05;
+    public static final double ROTATION_kI = 0.0;
+    public static final double ROTATION_kD = 0.004;
+
+    // Motion profile constraints for rotation
+    // Not needed since using Drive's built-in heading lock, but you could use these to add a
+    // separate rotation command if you wanted.
+    public static final double MAX_ROTATION_VEL_DEG_PER_SEC = 360.0; // deg/s
+    public static final double MAX_ROTATION_ACCEL_DEG_PER_SEC2 = 720.0; // deg/s^2
+
+    // How close tx must be to 0 for isHeadingLocked() to return true
+    // Not needed since using Drive's built-in heading lock, but you could use these to add a
+    // separate rotation command if you wanted.
+    public static final double HEADING_TOLERANCE_DEGREES = 1.5;
+
+    // Max translation speed passed through from the driver during auto-aim
+    // Set this to your drive subsystem's max speed (typically 4.5–5.0 m/s)
+    // Not needed since using Drive's built-in heading lock, but you could use these to add a
+    // separate rotation command if you wanted.
+    public static final double MAX_DRIVE_SPEED_METERS_PER_SEC = 4.5;
+
+    // Default flywheel speed if shot map is empty or distance is invalid
+    public static final double DEFAULT_RPS = 70.0;
+
+    // Distance (meters) → flywheel speed (rot/sec) lookup table.
+    // Measure real shot data on the field and fill this in.
+    // Format: put(distanceMeters, rotationsPerSecond)
+    // Needs to be filled in with real data...
+    public static final TreeMap<Double, Double> SHOT_MAP = new TreeMap<>();
+
+    static {
+      SHOT_MAP.put(1.5, 55.0);
+      SHOT_MAP.put(2.0, 63.0);
+      SHOT_MAP.put(2.5, 70.0);
+      SHOT_MAP.put(3.0, 78.0);
+      SHOT_MAP.put(3.5, 85.0);
+      SHOT_MAP.put(4.0, 92.0);
+    }
   }
 
   // -----------------------------------------------------------------------
