@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -49,6 +50,7 @@ public class RobotContainer {
   private final Hopper hopper;
   private final Kicker kicker;
   private final Vision vision;
+  // private static Pose2d robotPose;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -206,6 +208,18 @@ public class RobotContainer {
                 },
                 shooter,
                 kicker));
+    // to find kv and ks values
+    controller
+        .rightTrigger()
+        .whileTrue(
+            new RunCommand(
+                () -> shooter.setVoltage(SmartDashboard.getNumber("Shooter/TestVoltage", 0)),
+                shooter))
+        .onFalse(Commands.runOnce(() -> shooter.stop(), shooter));
+  }
+
+  public Pose2d updatePose() {
+    return drive.getPose();
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

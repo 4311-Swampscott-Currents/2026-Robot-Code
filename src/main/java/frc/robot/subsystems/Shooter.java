@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -36,7 +37,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFX m_rightShooter = new TalonFX(Constants.ShooterConstants.M_RIGHT_SHOOTER_ID);
   private final TalonFX m_leftShooter = new TalonFX(Constants.ShooterConstants.M_LEFT_SHOOTER_ID);
 
-  // Command only the top motor — bottom follows automatically
+  // Command only the top motor — left follows automatically
   private final VelocityVoltage velocityRequest =
       new VelocityVoltage(0).withSlot(0) /*.withEnableFOC(true)*/;
 
@@ -102,6 +103,10 @@ public class Shooter extends SubsystemBase {
     // m_leftShooter follows automatically — do NOT call setControl on it here
   }
 
+  public void setVoltage(double volts) {
+    m_rightShooter.setControl(new VoltageOut(volts));
+  }
+
   /**
    * Stop both motors. Clears follower mode on the bottom motor temporarily; re-enable by calling
    * setVelocity() again or re-applying the follower request.
@@ -127,11 +132,11 @@ public class Shooter extends SubsystemBase {
     return targetRPS > 0.0;
   }
 
-  public double getTopVelocityRPS() {
+  public double getRightVelocityRPS() {
     return m_rightShooter.getVelocity().getValueAsDouble();
   }
 
-  public double getBottomVelocityRPS() {
+  public double getLeftVelocityRPS() {
     return m_leftShooter.getVelocity().getValueAsDouble();
   }
 
@@ -141,12 +146,13 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter/TargetRPS", targetRPS);
-    SmartDashboard.putNumber("Shooter/TopRPS", getTopVelocityRPS());
-    SmartDashboard.putNumber("Shooter/BottomRPS", getBottomVelocityRPS());
+    SmartDashboard.putNumber("Shooter/RightRPS", getRightVelocityRPS());
+    SmartDashboard.putNumber("Shooter/LeftRPS", getLeftVelocityRPS());
     SmartDashboard.putBoolean("Shooter/AtSetpoint", atSetpoint());
     SmartDashboard.putNumber(
         "Shooter/TopStatorAmps", m_rightShooter.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber(
         "Shooter/BottomStatorAmps", m_leftShooter.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Shooter/TestVoltage", 0.0);
   }
 }
