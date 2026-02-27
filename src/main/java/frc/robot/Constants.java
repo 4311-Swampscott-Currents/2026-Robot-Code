@@ -48,11 +48,11 @@ public final class Constants {
 
     // Velocity PID (Phoenix 6 Slot 0) — units: rot/sec
     // kV is the most critical gain. Characterize first via SysId or manual sweep.
-    public static final double kP = 0.30;
+    public static final double kP = 0.50;
     public static final double kI = 0.00;
     public static final double kD = 0.00;
-    public static final double kS = 0.05; // static friction (volts)
-    public static final double kV = 0.12; // volts per rot/sec — TUNE THIS
+    public static final double kS = 0.2; // static friction (volts)
+    public static final double kV = 0.12643; // volts per rot/sec — TUNE THIS
 
     // "At speed" tolerance (~50 RPM expressed in rot/sec)
     public static final double TOLERANCE_RPS = 50.0 / 60.0;
