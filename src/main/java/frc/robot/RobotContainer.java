@@ -8,11 +8,11 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -114,6 +114,25 @@ public class RobotContainer {
                 new ModuleIO() {});
         break;
     }
+    // Instantiate subsystems
+    shooter = new Shooter();
+    intakeArm = new IntakeArm();
+    intakeRoller = new IntakeRoller();
+    hopper = new Hopper();
+    kicker = new Kicker();
+    vision = new Vision(drive);
+
+    // pathplanner commands
+    NamedCommands.registerCommand("Deploy Intake", intakeArm.deployCommand());
+    NamedCommands.registerCommand("Retract Intake", intakeArm.retractCommand());
+    NamedCommands.registerCommand(
+        "Intake Balls", Commands.runOnce(() -> intakeRoller.intake(), intakeRoller));
+    NamedCommands.registerCommand(
+        "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
+    NamedCommands.registerCommand("Spin Shooter", shooter.shootWithRPS(vision));
+    NamedCommands.registerCommand("Stop Shooting", Commands.runOnce(() -> shooter.stop(), shooter));
+    NamedCommands.registerCommand(
+        "Spin Kicker When Shooting", Commands.waitUntil(shooter::atSetpoint).andThen(kicker::kick));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -133,14 +152,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    // Instantiate subsystems
-    shooter = new Shooter();
-    intakeArm = new IntakeArm();
-    intakeRoller = new IntakeRoller();
-    hopper = new Hopper();
-    kicker = new Kicker();
-    vision = new Vision(drive);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -166,11 +177,12 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             AutoAimCommands.autoAimPoseBased(
-                drive,
-                vision,
-                shooter,
-                () -> -controller.getLeftY(),
-                () -> -controller.getRightX()));
+                    drive,
+                    vision,
+                    shooter,
+                    () -> -controller.getLeftY(),
+                    () -> -controller.getRightX())
+                .alongWith(shooter.shootWithRPS(vision)));
 
     // Lock to 0° when A button is held
     controller
@@ -208,14 +220,6 @@ public class RobotContainer {
                 },
                 shooter,
                 kicker));
-    // to find kv and ks values
-    controller
-        .rightTrigger()
-        .whileTrue(
-            new RunCommand(
-                () -> shooter.setVoltage(SmartDashboard.getNumber("Shooter/TestVoltage", 0)),
-                shooter))
-        .onFalse(Commands.runOnce(() -> shooter.stop(), shooter));
   }
 
   public Pose2d updatePose() {

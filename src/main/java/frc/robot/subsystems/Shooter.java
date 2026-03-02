@@ -9,8 +9,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.AutoAimCommands;
 
 /**
  * ShooterSubsystem
@@ -138,6 +141,13 @@ public class Shooter extends SubsystemBase {
 
   public double getLeftVelocityRPS() {
     return m_leftShooter.getVelocity().getValueAsDouble();
+  }
+
+  public Command shootWithRPS(
+      Vision vision) { // shoots using the distance data from vision and the interpolation data from
+    // the RPM table
+    return Commands.run(
+        () -> setVelocity(AutoAimCommands.interpolateRPS(vision.getDistanceMeters())));
   }
 
   // -----------------------------------------------------------------------

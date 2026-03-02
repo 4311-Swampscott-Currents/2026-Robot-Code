@@ -96,55 +96,50 @@ public final class Constants {
   // Intake Arm (pivot)
   // -----------------------------------------------------------------------
   public static final class IntakeArmConstants {
-    public static final int M_Intake_Arm_ID = 20;
+    public static final int PIVOT_MOTOR_ID = 20;
 
-    // REV Through Bore Encoder → RoboRIO DIO port
-    public static final int THROUGH_BORE_DIO_PORT = 0; // change to match your wiring
-
-    // Set ENCODER_INVERTED = true if the encoder reads backwards
-    // (decreases when arm deploys toward ground)
+    public static final int THROUGH_BORE_DIO_PORT = 0;
     public static final boolean ENCODER_INVERTED = false;
-
-    // Offset: the raw Through Bore value when the arm is fully stowed.
-    // Stow arm physically → read Arm/ThroughBoreRaw → paste here.
     public static final double ENCODER_OFFSET = 0.0; // TUNE!
 
-    // Mechanism gear ratio: motor rotations per 1 arm shaft rotation
-    public static final double GEAR_RATIO = 60.0;
+    // 125:1 gearbox — motor rotations per arm shaft rotation
+    public static final double GEAR_RATIO = 125.0;
 
-    // Arm setpoint positions in ARM SHAFT rotations (not motor rotations).
-    // Move arm to each position → read Arm/ThroughBoreAdjusted → paste here.
-    // Expect small numbers (0.0–0.35 range for most FRC arms).
-    public static final double STOW_ROTATIONS = 0.0;
-    public static final double DEPLOY_ROTATIONS = 0.18; // TUNE!
-    public static final double GROUND_ROTATIONS = 0.27; // TUNE!
+    // Stop positions in arm shaft rotations
+    // With 125:1 the arm moves very slowly — full range might be
+    // only 0.1-0.2 arm shaft rotations for a typical intake pivot
+    public static final double DEPLOYED_POSITION = 0.15; // TUNE!
+    public static final double RETRACTED_POSITION = 0.01; // TUNE!
 
-    // Soft limits: set ~0.02 rot INSIDE the physical hard stops
-    public static final double MIN_ROTATIONS = -0.02; // TUNE!
-    public static final double MAX_ROTATIONS = 0.30; // TUNE!
+    // Soft limits — TalonFX hardware safety net, operates independently of
+    // command logic. If stall detection fails entirely, the motor cuts out
+    // before the arm damages itself or the gearbox.
+    public static final double SOFT_LIMIT_MAX = 0.29; // TUNE!
+    public static final double SOFT_LIMIT_MIN = 0.00;
 
-    // MotionMagic profile — start conservative, increase until smooth
-    public static final double MM_CRUISE_VEL = 80.0; // rot/s
-    public static final double MM_ACCELERATION = 160.0; // rot/s^2
-    public static final double MM_JERK = 1600.0; // rot/s^3
+    // Duty cycle for movement
+    // With 125:1 even a small duty cycle produces enormous torque
+    // Start very low and increase carefully — the arm will be powerful
+    public static final double DEPLOY_DUTY_CYCLE = 0.15; // TUNE! — start low with 125:1
+    public static final double RETRACT_DUTY_CYCLE = -0.12; // TUNE!
 
-    // PID Slot 0
-    public static final double kP = 2.4;
-    public static final double kI = 0.0;
-    public static final double kD = 0.1;
-    public static final double kS = 0.25;
-    public static final double kG = 0.30; // TUNE FIRST — gravity comp
+    // ── Stop detection ────────────────────────────────────────────────
+    // With 125:1, arm shaft velocity is very low even at full speed.
+    // Normal moving velocity might only be 0.1-0.3 arm shaft RPS.
+    // Set this threshold accordingly — much lower than a direct drive arm.
+    public static final double STALL_VELOCITY_RPS = 0.05; // TUNE! — low due to 125:1
 
-    // At-setpoint tolerance in mechanism rotations
-    public static final double TOLERANCE_ROT = 0.02; // tighter now that units are right
+    // With 125:1 and light load, normal moving current is very low.
+    // Stall current may not spike as dramatically as a lower ratio gearbox.
+    // Watch Arm/StatorAmps during movement and set above that value.
+    public static final double STALL_CURRENT_AMPS = 25.0; // TUNE!
 
-    // Current limits
-    // Arm needs real torque to move + hold against gravity; 60A stator
-    // gives headroom without risking motor damage if stalled against soft limit
-    public static final double STATOR_CURRENT_LIMIT = 60.0;
-    public static final double SUPPLY_CURRENT_LIMIT = 40.0;
+    // ── Current limits ────────────────────────────────────────────────
+    // Supply: below 80% of 40A fuse = 32A max. 20A is conservative and safe.
+    // Stator: 30A gives plenty of torque through 125:1 without motor damage.
+    public static final double SUPPLY_CURRENT_LIMIT = 20.0; // below 32A (80% of 40A fuse)
+    public static final double STATOR_CURRENT_LIMIT = 30.0;
   }
-
   // -----------------------------------------------------------------------
   // Intake Roller
   // -----------------------------------------------------------------------
@@ -240,9 +235,20 @@ public final class Constants {
     // Measure real shot data on the field and fill this in.
     // Format: put(distanceMeters, rotationsPerSecond)
     // Needs to be filled in with real data...
-    public static final TreeMap<Double, Double> SHOT_MAP = new TreeMap<>();
 
-    static {
+    // fuck you
+
+    // fill in this data
+    /* ┗┻┻┻┻┻┻┻┻┻┻┻┻┻┻┻┫
+     *                 ┃
+     *                 ┃
+     *                 ┗━━━━━━━━━━━━━━━━━━━━━━┓
+     */
+    //                                    ┃
+    //                                        ┃
+    public static final TreeMap<Double, /*    ┃ */ Double> SHOT_MAP = new TreeMap<>();
+    //                                        ┃
+    static { //                ⬐――――――――――――――┚
       SHOT_MAP.put(1.5, 55.0);
       SHOT_MAP.put(2.0, 63.0);
       SHOT_MAP.put(2.5, 70.0);
@@ -250,6 +256,11 @@ public final class Constants {
       SHOT_MAP.put(3.5, 85.0);
       SHOT_MAP.put(4.0, 92.0);
     }
+  }
+
+  public final class ClimberConstants {
+
+    public static final float CLIMBER_MOTOR_ID = 4311; // TEMP
   }
 
   // -----------------------------------------------------------------------

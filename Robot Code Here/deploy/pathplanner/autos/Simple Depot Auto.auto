@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Deploy Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Balls"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Collect Depot Balls"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Line up to shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Spin Shooter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Spin Kicker When Shooting"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Shooting"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

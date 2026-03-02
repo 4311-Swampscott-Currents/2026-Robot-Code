@@ -14,4 +14,14 @@ public class Boris {
       iterator++;
     }
   }
+
+  public class B {
+    public class O {
+      public class R {
+        public class I {
+          public class S {}
+        }
+      }
+    }
+  }
 }

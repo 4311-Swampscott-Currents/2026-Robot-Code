@@ -1,69 +1,80 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /**
  * IntakeArmSubsystem
  *
- * <p>MotionMagic position control for the intake arm pivot. REV Through Bore Encoder on a RoboRIO
- * DIO port provides absolute position. The TalonFX internal encoder is seeded from the Through Bore
- * on startup, then used for closed-loop — no drift, no homing sequence.
+ * <p>Simple hard-stop control for the intake arm pivot. No Motion Magic, no PID, no feedforward
+ * tuning required.
  *
- * <p>CURRENT LIMITS: Stator: 60A — arm needs meaningful torque to move and hold against gravity,
- * but 60A prevents sustained overheating if the arm is stalled against a hard stop (soft limits
- * should prevent this anyway) Supply: 40A — sized above the stator limit to give headroom during
- * fast moves
+ * <p>The arm has two positions — DEPLOYED and RETRACTED — each with a physical hard stop. The motor
+ * runs at a fixed duty cycle toward the target stop, then cuts out when the stop is detected.
  *
- * <p>POSITION UNITS: mechanism rotations of the ARM SHAFT (not motor shaft). SensorToMechanismRatio
- * in the config divides out the gearbox automatically. With a Through Bore on the arm shaft
- * directly, values are small fractions of 1.0 — expect your full range to be something like 0.0 to
- * 0.30.
+ * <p>── Stop Detection ─────────────────────────────────────────────────────────── Three
+ * independent conditions checked every loop. Arm is considered at its stop when ANY of the
+ * following triggers:
  *
- * <p>TUNING ORDER: 1. Watch Arm/ThroughBoreRaw — move arm, verify it changes 0.0–1.0 If backwards,
- * set ENCODER_INVERTED = true in Constants 2. Stow arm, read Arm/ThroughBoreRaw, paste as
- * ENCODER_OFFSET 3. Move arm to DEPLOY and GROUND positions, read Arm/ThroughBoreAdjusted, paste
- * those values into Constants as DEPLOY_ROTATIONS / GROUND_ROTATIONS 4. Set MIN/MAX soft limits
- * with ~0.02 rot margin inside physical hard stops 5. Tune kG: hold arm horizontal, raise until it
- * holds without drifting 6. Tune MotionMagic cruise/accel/jerk: start conservative, speed up 7.
- * Tune kP: raise until position error is small without oscillation
+ * <p>1. POSITION — Through Bore encoder reaches the known stop position. Most reliable in normal
+ * conditions. Set DEPLOYED_POSITION and RETRACTED_POSITION slightly inside the physical stop so
+ * this triggers just before full contact.
+ *
+ * <p>2. VELOCITY + CURRENT (combined) — velocity drops near zero AND current spikes simultaneously.
+ * Both must be true together to avoid false positives at startup (velocity is zero but current is
+ * also zero before the motor has energized). This catches the stop even if the encoder drifts.
+ *
+ * <p>── Current Limits ─────────────────────────────────────────────────────────── Stator limit set
+ * low (20A) because: - Arm intentionally stalls against a hard stop - 20A moves the arm fine but
+ * won't overheat during stall - No need for the 60A Motion Magic required for profiled moves
+ *
+ * <p>── Tuning Order ───────────────────────────────────────────────────────────── 1. Watch
+ * Arm/ThroughBoreRaw — move arm, verify it changes smoothly If backwards, set ENCODER_INVERTED =
+ * true in Constants 2. Retract arm fully → read Arm/ThroughBoreRaw → paste as ENCODER_OFFSET 3.
+ * Move to each stop → read Arm/ThroughBoreAdjusted → paste as DEPLOYED_POSITION /
+ * RETRACTED_POSITION (set ~0.01 inside physical stop) 4. Adjust DEPLOY/RETRACT_DUTY_CYCLE until arm
+ * moves at a comfortable speed 5. Watch Arm/StatorAmps while arm hits stop → set STALL_CURRENT_AMPS
+ * above normal moving current but below peak stall current you observe
  */
 public class IntakeArm extends SubsystemBase {
 
   // -----------------------------------------------------------------------
   // Hardware
   // -----------------------------------------------------------------------
-  private final TalonFX m_IntakeArm = new TalonFX(Constants.IntakeArmConstants.M_Intake_Arm_ID);
+  private final TalonFX pivotMotor = new TalonFX(Constants.IntakeArmConstants.PIVOT_MOTOR_ID);
   private final DutyCycleEncoder throughBoreEncoder =
       new DutyCycleEncoder(Constants.IntakeArmConstants.THROUGH_BORE_DIO_PORT);
 
-  private final MotionMagicVoltage motionMagicRequest =
-      new MotionMagicVoltage(0).withSlot(0) /*.withEnableFOC(true)*/;
+  // -----------------------------------------------------------------------
+  // Control requests
+  // -----------------------------------------------------------------------
+  private final DutyCycleOut deployRequest =
+      new DutyCycleOut(Constants.IntakeArmConstants.DEPLOY_DUTY_CYCLE).withEnableFOC(false);
+  private final DutyCycleOut retractRequest =
+      new DutyCycleOut(Constants.IntakeArmConstants.RETRACT_DUTY_CYCLE).withEnableFOC(false);
+  private final DutyCycleOut manualRequest =
+      new DutyCycleOut(0).withEnableFOC(false); // value set at call time via withOutput()
+  private final NeutralOut neutralRequest = new NeutralOut();
 
   // -----------------------------------------------------------------------
-  // Arm position presets
+  // State tracking
   // -----------------------------------------------------------------------
-  public enum ArmPosition {
-    STOW(Constants.IntakeArmConstants.STOW_ROTATIONS),
-    DEPLOY(Constants.IntakeArmConstants.DEPLOY_ROTATIONS),
-    GROUND(Constants.IntakeArmConstants.GROUND_ROTATIONS);
-
-    public final double rotations;
-
-    ArmPosition(double r) {
-      this.rotations = r;
-    }
+  public enum ArmState {
+    DEPLOYED,
+    RETRACTED,
+    MOVING
   }
 
-  private ArmPosition currentTarget = ArmPosition.STOW;
+  private ArmState currentState = ArmState.RETRACTED;
 
   // -----------------------------------------------------------------------
   // Constructor
@@ -71,107 +82,199 @@ public class IntakeArm extends SubsystemBase {
   public IntakeArm() {
     configurePivotMotor();
     seedMotorFromEncoder();
+
+    // Pre-populate dashboard entries so they appear before first command runs
+    SmartDashboard.putBoolean("Arm/IsDeployed", false);
+    SmartDashboard.putBoolean("Arm/IsRetracted", true);
+    SmartDashboard.putBoolean("Arm/Stalled", false);
+    SmartDashboard.putString("Arm/State", currentState.name());
+    SmartDashboard.putNumber("Arm/PositionRot", 0.0);
+    SmartDashboard.putNumber("Arm/VelocityRPS", 0.0);
+    SmartDashboard.putNumber("Arm/StatorAmps", 0.0);
+    SmartDashboard.putNumber("Arm/ThroughBoreRaw", 0.0);
+    SmartDashboard.putNumber("Arm/ThroughBoreAdjusted", 0.0);
+    SmartDashboard.putBoolean("Arm/EncoderConnected", false);
   }
 
   // -----------------------------------------------------------------------
   // Configuration
   // -----------------------------------------------------------------------
   private void configurePivotMotor() {
-    TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
+    TalonFXConfiguration intakeArmTalonFXConfiguration = new TalonFXConfiguration();
 
-    // --- Slot 0: MotionMagic PID + Gravity Feedforward ---
-    motorConfiguration.Slot0.kP = Constants.IntakeArmConstants.kP;
-    motorConfiguration.Slot0.kI = Constants.IntakeArmConstants.kI;
-    motorConfiguration.Slot0.kD = Constants.IntakeArmConstants.kD;
-    motorConfiguration.Slot0.kS = Constants.IntakeArmConstants.kS;
-    motorConfiguration.Slot0.kG = Constants.IntakeArmConstants.kG;
-    motorConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-
-    // --- MotionMagic Profile ---
-    motorConfiguration.MotionMagic.MotionMagicCruiseVelocity =
-        Constants.IntakeArmConstants.MM_CRUISE_VEL;
-    motorConfiguration.MotionMagic.MotionMagicAcceleration =
-        Constants.IntakeArmConstants.MM_ACCELERATION;
-    motorConfiguration.MotionMagic.MotionMagicJerk = Constants.IntakeArmConstants.MM_JERK;
-
-    // --- Feedback: TalonFX internal encoder, seeded from Through Bore ---
-    motorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    motorConfiguration.Feedback.SensorToMechanismRatio = Constants.IntakeArmConstants.GEAR_RATIO;
-    // --- Current Limits ---
-    // Higher than kicker/hopper because the arm needs real torque
-    motorConfiguration.CurrentLimits.StatorCurrentLimit =
+    // Low current limits — arm intentionally stalls at hard stops.
+    // 20A is enough torque to move the arm but safe for brief stalls.
+    intakeArmTalonFXConfiguration.CurrentLimits.StatorCurrentLimit =
         Constants.IntakeArmConstants.STATOR_CURRENT_LIMIT;
-    motorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-    motorConfiguration.CurrentLimits.SupplyCurrentLimit =
+    intakeArmTalonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    intakeArmTalonFXConfiguration.CurrentLimits.SupplyCurrentLimit =
         Constants.IntakeArmConstants.SUPPLY_CURRENT_LIMIT;
-    motorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    intakeArmTalonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    // --- Soft Limits ---
-    // VERIFY these on the real robot before running closed-loop!
-    motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    motorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        Constants.IntakeArmConstants.MAX_ROTATIONS;
-    motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    motorConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        Constants.IntakeArmConstants.MIN_ROTATIONS;
+    // Gear ratio so velocity/position readings are in arm shaft units,
+    // not motor shaft units — consistent with Through Bore encoder values
+    intakeArmTalonFXConfiguration.Feedback.SensorToMechanismRatio =
+        Constants.IntakeArmConstants.GEAR_RATIO;
 
-    // Brake: holds position when idle, resists gravity
-    motorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    // Soft limits — hardware enforced position boundaries.
+    // Set slightly OUTSIDE your stop positions so soft limits only trigger
+    // if the primary stop detection fails entirely.
+    intakeArmTalonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    intakeArmTalonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        Constants.IntakeArmConstants.SOFT_LIMIT_MAX;
+    intakeArmTalonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    intakeArmTalonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        Constants.IntakeArmConstants.SOFT_LIMIT_MIN;
 
-    m_IntakeArm.getConfigurator().apply(motorConfiguration);
+    // Brake mode — holds arm in place when motor is stopped.
+    // Prevents back-driving under gravity when neutral.
+    intakeArmTalonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    pivotMotor.getConfigurator().apply(intakeArmTalonFXConfiguration);
   }
 
-  // -----------------------------------------------------------------------
-  // Encoder seeding
-  // -----------------------------------------------------------------------
-
   /**
-   * Seeds the TalonFX internal encoder from the Through Bore absolute position. Called once in the
-   * constructor. Can also be bound to a button for field-side re-zeroing after a hard impact.
+   * Seeds the TalonFX internal encoder from the Through Bore absolute position. Called once in
+   * constructor. Can be re-called via a button if encoder reading drifts after a hard impact.
    */
   public void seedMotorFromEncoder() {
-    m_IntakeArm.setPosition(getAbsolutePositionRotations());
-  }
-
-  // -----------------------------------------------------------------------
-  // Public API
-  // -----------------------------------------------------------------------
-
-  /**
-   * Move the arm to a preset position using MotionMagic. Generates a smooth S-curve profile
-   * automatically.
-   */
-  public void setPosition(ArmPosition position) {
-    currentTarget = position;
-    m_IntakeArm.setControl(motionMagicRequest.withPosition(position.rotations));
+    pivotMotor.setPosition(getAbsolutePositionRotations());
   }
 
   /**
-   * True when arm is within tolerance of its target. Use this in command sequences to detect when
-   * motion is complete.
+   * Returns true when the arm has reached the deployed hard stop.
+   *
+   * <p>Triggers when EITHER: - Position: encoder >= DEPLOYED_POSITION - Stall: velocity near zero
+   * AND current high (both required together)
+   *
+   * <p>Position is the primary condition. Stall is the backup if encoder drifts.
    */
-  public boolean atSetpoint() {
-    return Math.abs(m_IntakeArm.getClosedLoopError().getValueAsDouble())
-        < Constants.IntakeArmConstants.TOLERANCE_ROT;
+  public boolean isAtDeployedStop() {
+    boolean atPosition = getPositionRotations() >= Constants.IntakeArmConstants.DEPLOYED_POSITION;
+    return atPosition || isStalled();
   }
 
-  /** Arm position in mechanism rotations (what MotionMagic uses). */
+  /**
+   * Returns true when the arm has reached the retracted hard stop.
+   *
+   * <p>Same logic as isAtDeployedStop() but in the retract direction.
+   */
+  public boolean isAtRetractedStop() {
+    boolean atPosition = getPositionRotations() <= Constants.IntakeArmConstants.RETRACTED_POSITION;
+    return atPosition || isStalled();
+  }
+
+  /**
+   * Returns true when the motor appears to be stalling against a hard stop.
+   *
+   * <p>Requires BOTH: - Velocity < STALL_VELOCITY_RPS (arm has stopped moving) - Current >
+   * STALL_CURRENT_AMPS (motor is working hard against resistance)
+   *
+   * <p>Requiring both distinguishes a genuine stall from startup state (velocity zero but current
+   * also near zero before motor energizes).
+   */
+  public boolean isStalled() {
+    boolean velocityNearZero =
+        Math.abs(getVelocityRPS()) < Constants.IntakeArmConstants.STALL_VELOCITY_RPS;
+    boolean highCurrent = getStatorAmps() > Constants.IntakeArmConstants.STALL_CURRENT_AMPS;
+    return velocityNearZero && highCurrent;
+  }
+
+  private void runDeploy() {
+    currentState = ArmState.MOVING;
+    pivotMotor.setControl(deployRequest);
+  }
+
+  private void runRetract() {
+    currentState = ArmState.MOVING;
+    pivotMotor.setControl(retractRequest);
+  }
+
+  public void stop() {
+    pivotMotor.setControl(neutralRequest);
+  }
+
+  /**
+   * Moves the arm to the deployed position and stops when the hard stop is reached.
+   *
+   * <p>Self-terminating — bind with onTrue() in RobotContainer, not whileTrue(). The command
+   * finishes on its own; no need to specify a stop condition externally.
+   *
+   * <p>Stop detection (isAtDeployedStop) triggers on EITHER: - Position: encoder >=
+   * DEPLOYED_POSITION - Stall: velocity near zero AND current high simultaneously
+   *
+   * <p>The AND condition in isStalled() naturally prevents false triggering at startup — current is
+   * near zero before the motor energizes even though velocity is also zero, so isStalled() returns
+   * false until genuine stall.
+   */
+  public Command deployCommand() {
+    return Commands.run(this::runDeploy, this)
+        .until(this::isAtDeployedStop)
+        .finallyDo(
+            () -> {
+              stop();
+              currentState = ArmState.DEPLOYED;
+            });
+  }
+
+  /**
+   * Moves the arm to the retracted position and stops when the hard stop is reached.
+   *
+   * <p>Self-terminating — bind with onTrue() in RobotContainer, not whileTrue().
+   */
+  public Command retractCommand() {
+    return Commands.run(this::runRetract, this)
+        .until(this::isAtRetractedStop)
+        .finallyDo(
+            () -> {
+              stop();
+              currentState = ArmState.RETRACTED;
+            });
+  }
+
+  /**
+   * Moves the arm at a manually specified duty cycle. Useful for tuning DEPLOY_DUTY_CYCLE /
+   * RETRACT_DUTY_CYCLE constants, or as an operator override if auto stop detection is unreliable.
+   *
+   * <p>Positive dutyCycle → deploy direction Negative dutyCycle → retract direction
+   *
+   * <p>Use with whileTrue() since this command never self-terminates: operatorController.povUp()
+   * .whileTrue(intakeArm.manualCommand(0.15));
+   *
+   * @param dutyCycle duty cycle from -1.0 to 1.0
+   */
+  public Command manualCommand(double dutyCycle) {
+    return Commands.run(() -> pivotMotor.setControl(manualRequest.withOutput(dutyCycle)), this)
+        .finallyDo(() -> stop());
+  }
+
+  /** Motor velocity in arm shaft RPS (gear ratio applied). */
+  public double getVelocityRPS() {
+    return pivotMotor.getVelocity().getValueAsDouble();
+  }
+
+  /** Motor position in arm shaft rotations (gear ratio applied). */
   public double getPositionRotations() {
-    return m_IntakeArm.getPosition().getValueAsDouble();
+    return pivotMotor.getPosition().getValueAsDouble();
+  }
+
+  /** Motor stator current in amps. */
+  public double getStatorAmps() {
+    return pivotMotor.getStatorCurrent().getValueAsDouble();
   }
 
   /**
-   * Absolute position from the Through Bore in mechanism rotations, with offset and inversion
-   * applied. 0.0 = stow.
+   * Absolute arm shaft position from the Through Bore encoder in rotations. Applies offset and
+   * inversion from Constants. 0.0 = fully retracted.
    */
   public double getAbsolutePositionRotations() {
-    double raw = throughBoreEncoder.get(); // 0.0–1.0 over one rotation of the arm shaft
+    double raw = throughBoreEncoder.get();
 
     if (Constants.IntakeArmConstants.ENCODER_INVERTED) raw = 1.0 - raw;
 
     double adjusted = raw - Constants.IntakeArmConstants.ENCODER_OFFSET;
 
-    // Normalize around 0 to handle wrap-around at the 0/1 boundary
+    // Normalize to handle wrap-around at the 0/1 boundary
     while (adjusted < -0.5) adjusted += 1.0;
     while (adjusted > 0.5) adjusted -= 1.0;
 
@@ -182,12 +285,16 @@ public class IntakeArm extends SubsystemBase {
     return throughBoreEncoder.isConnected();
   }
 
-  public ArmPosition getCurrentTarget() {
-    return currentTarget;
+  public ArmState getCurrentState() {
+    return currentState;
   }
 
-  public void stop() {
-    m_IntakeArm.stopMotor();
+  public boolean isDeployed() {
+    return currentState == ArmState.DEPLOYED;
+  }
+
+  public boolean isRetracted() {
+    return currentState == ArmState.RETRACTED;
   }
 
   // -----------------------------------------------------------------------
@@ -195,15 +302,15 @@ public class IntakeArm extends SubsystemBase {
   // -----------------------------------------------------------------------
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("Arm/IsDeployed", isDeployed());
+    SmartDashboard.putBoolean("Arm/IsRetracted", isRetracted());
+    SmartDashboard.putBoolean("Arm/Stalled", isStalled());
+    SmartDashboard.putString("Arm/State", currentState.name());
     SmartDashboard.putNumber("Arm/PositionRot", getPositionRotations());
-    SmartDashboard.putNumber("Arm/TargetRot", currentTarget.rotations);
-    SmartDashboard.putNumber(
-        "Arm/ClosedLoopError", m_IntakeArm.getClosedLoopError().getValueAsDouble());
-    SmartDashboard.putBoolean("Arm/AtSetpoint", atSetpoint());
-    SmartDashboard.putString("Arm/Target", currentTarget.name());
+    SmartDashboard.putNumber("Arm/VelocityRPS", getVelocityRPS());
+    SmartDashboard.putNumber("Arm/StatorAmps", getStatorAmps());
     SmartDashboard.putNumber("Arm/ThroughBoreRaw", throughBoreEncoder.get());
     SmartDashboard.putNumber("Arm/ThroughBoreAdjusted", getAbsolutePositionRotations());
     SmartDashboard.putBoolean("Arm/EncoderConnected", isEncoderConnected());
-    SmartDashboard.putNumber("Arm/StatorAmps", m_IntakeArm.getStatorCurrent().getValueAsDouble());
   }
 }

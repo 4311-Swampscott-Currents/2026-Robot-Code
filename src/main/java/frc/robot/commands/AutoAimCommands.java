@@ -105,7 +105,7 @@ public class AutoAimCommands {
    * Linearly interpolates flywheel RPS from SHOT_MAP for a given distance. Clamps to nearest entry
    * if distance is outside the mapped range.
    */
-  private static double interpolateRPS(double distanceMeters) {
+  public static double interpolateRPS(double distanceMeters) {
     var map = Constants.AutoAim.SHOT_MAP;
 
     if (map.isEmpty()) return Constants.AutoAim.DEFAULT_RPS;
