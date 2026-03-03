@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,6 +22,7 @@ public class Kicker extends SubsystemBase {
 
   private final TalonFX kickerMotor = new TalonFX(Constants.KickerConstants.M_KICKER_ID);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
+  private final NeutralOut neutralRequest = new NeutralOut();
 
   public Kicker() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -48,7 +50,7 @@ public class Kicker extends SubsystemBase {
   }
 
   public void stop() {
-    kickerMotor.stopMotor();
+    kickerMotor.setControl(neutralRequest);
   }
 
   @Override

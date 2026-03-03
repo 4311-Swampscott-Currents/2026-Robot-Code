@@ -71,7 +71,8 @@ public class IntakeArm extends SubsystemBase {
   public enum ArmState {
     DEPLOYED,
     RETRACTED,
-    MOVING
+    DEPLOYING,
+    RETRACTING
   }
 
   private ArmState currentState = ArmState.RETRACTED;
@@ -181,12 +182,12 @@ public class IntakeArm extends SubsystemBase {
   }
 
   private void runDeploy() {
-    currentState = ArmState.MOVING;
+    currentState = ArmState.DEPLOYING;
     pivotMotor.setControl(deployRequest);
   }
 
   private void runRetract() {
-    currentState = ArmState.MOVING;
+    currentState = ArmState.RETRACTING;
     pivotMotor.setControl(retractRequest);
   }
 
@@ -246,6 +247,14 @@ public class IntakeArm extends SubsystemBase {
   public Command manualCommand(double dutyCycle) {
     return Commands.run(() -> pivotMotor.setControl(manualRequest.withOutput(dutyCycle)), this)
         .finallyDo(() -> stop());
+  }
+
+  /** Performs acts of witchcraft and heresy against the Omnissiah */
+  public Command toggleDeploy() {
+    if (currentState == ArmState.DEPLOYED || currentState == ArmState.DEPLOYING) {
+      return retractCommand();
+    }
+    return deployCommand();
   }
 
   /** Motor velocity in arm shaft RPS (gear ratio applied). */

@@ -177,12 +177,8 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             AutoAimCommands.autoAimPoseBased(
-                    drive,
-                    vision,
-                    shooter,
-                    () -> -controller.getLeftY(),
-                    () -> -controller.getRightX())
-                .alongWith(shooter.shootWithRPS(vision)));
+                drive, vision, shooter, () -> -controller.getLeftY(), () -> -controller.getLeftX())
+            /* .alongWith(shooter.shootWithRPS(vision))*/ );
 
     // Lock to 0° when A button is held
     controller
@@ -220,6 +216,24 @@ public class RobotContainer {
                 },
                 shooter,
                 kicker));
+    controller.leftTrigger().onTrue(intakeArm.toggleDeploy());
+
+    // tests deploy and retract commands by themselves
+    controller.povUp().onTrue(intakeArm.retractCommand());
+    controller.povDown().onTrue(intakeArm.deployCommand());
+
+    //  runs the kicker
+    controller
+        .start()
+        .whileTrue(
+            Commands.run(() -> kicker.runPercent(0.5), kicker)); // change this value if you want
+
+    // runs hopper
+
+    // runs intakeroller
+
+    // runs shooter
+
   }
 
   public Pose2d updatePose() {

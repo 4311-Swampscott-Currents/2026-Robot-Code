@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +24,7 @@ public class IntakeRoller extends SubsystemBase {
   private final TalonFX rollerMotor =
       new TalonFX(Constants.IntakeRollerConstants.M_Intake_Roller_ID);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
+  private final NeutralOut neutralRequest = new NeutralOut();
 
   public IntakeRoller() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -54,7 +56,7 @@ public class IntakeRoller extends SubsystemBase {
   }
 
   public void stop() {
-    rollerMotor.stopMotor();
+    rollerMotor.setControl(neutralRequest);
   }
 
   @Override

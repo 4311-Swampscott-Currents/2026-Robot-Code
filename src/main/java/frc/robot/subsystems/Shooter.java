@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -43,6 +44,7 @@ public class Shooter extends SubsystemBase {
   // Command only the top motor — left follows automatically
   private final VelocityVoltage velocityRequest =
       new VelocityVoltage(0).withSlot(0) /*.withEnableFOC(true)*/;
+  private final NeutralOut neutralRequest = new NeutralOut();
 
   // Follower request: copies top motor output, but opposes direction
   // because the motors are physically mounted facing each other
@@ -116,8 +118,8 @@ public class Shooter extends SubsystemBase {
    */
   public void stop() {
     targetRPS = 0.0;
-    m_rightShooter.stopMotor();
-    m_leftShooter.stopMotor();
+    m_rightShooter.setControl(neutralRequest);
+    m_leftShooter.setControl(neutralRequest);
     // Re-apply follower so bottom is ready for next setVelocity() call
     m_leftShooter.setControl(followerRequest);
   }

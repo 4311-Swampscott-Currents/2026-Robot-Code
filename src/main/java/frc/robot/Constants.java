@@ -189,6 +189,10 @@ public final class Constants {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
       27, 28, 29, 30, 31, 32
     };
+    /** the minimum X values of the zone in which the robot can shoot into the target */
+    public static final double BLUE_ALLIANCE_ZONE_X = 4;
+    /** the maximum X values of the zone in which the robot can shoot into the target */
+    public static final double RED_ALLIANCE_ZONE_X = 12.5;
 
     // Kalman filter standard deviations for MegaTag 2 vision updates
     // in Drive.updateOdometry(). Lower = trust vision more.
@@ -242,13 +246,14 @@ public final class Constants {
     /* ┗┻┻┻┻┻┻┻┻┻┻┻┻┻┻┻┫
      *                 ┃
      *                 ┃
-     *                 ┗━━━━━━━━━━━━━━━━━━━━━━┓
+     *                 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┓
      */
-    //                                    ┃
-    //                                        ┃
-    public static final TreeMap<Double, /*    ┃ */ Double> SHOT_MAP = new TreeMap<>();
-    //                                        ┃
-    static { //                ⬐――――――――――――――┚
+    //                                  ┃
+    //                                            ┃
+    //                                            ┃
+    public static final TreeMap<Double, /*        ┃ */ Double> SHOT_MAP = new TreeMap<>();
+    // format: distanceMeters, rotationsPerSecond  ┃
+    static { //             ⬐――――――――――――――――――――┚
       SHOT_MAP.put(1.5, 55.0);
       SHOT_MAP.put(2.0, 63.0);
       SHOT_MAP.put(2.5, 70.0);

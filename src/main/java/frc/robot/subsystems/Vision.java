@@ -120,6 +120,21 @@ public class Vision extends SubsystemBase {
     return trackedID == getTargetTagID();
   }
 
+  /** Returns true when the robot is inside the alliance zone and can shoot. */
+  public boolean inAllianceZone() {
+    var alliance = DriverStation.getAlliance().get();
+    var blue = DriverStation.Alliance.Blue;
+    var red = DriverStation.Alliance.Red;
+    if (alliance == blue
+        && drive.getPose().getX() < Constants.VisionConstants.BLUE_ALLIANCE_ZONE_X) {
+      return true;
+    }
+    if (alliance == red && drive.getPose().getX() > Constants.VisionConstants.RED_ALLIANCE_ZONE_X) {
+      return true;
+    }
+    return false; // nutmeg
+  }
+
   /**
    * Returns the horizontal angle error to the primary target in degrees. Kept for logging and
    * diagnostics — aiming uses getAngleToTarget() instead.
@@ -163,10 +178,11 @@ public class Vision extends SubsystemBase {
    * @return Rotation2d — absolute field angle pointing from robot to target
    */
   public Rotation2d getAngleToTarget() {
+
     Pose2d robotPose = drive.getPose();
 
-    // If pose is unavailable or no target seen, hold current heading
-    if (robotPose == null || !hasTarget()) {
+    // If pose is unavailable or robot is not in alliance zone
+    if (robotPose == null || !inAllianceZone()) {
       return drive.getRotation();
     }
 
@@ -249,7 +265,6 @@ public class Vision extends SubsystemBase {
    * <p>Returns 0.0 if distance cannot be determined.
    */
   public double getDistanceMeters() {
-    if (!hasTarget()) return 0.0;
 
     // Primary: field pose distance
     Pose2d robotPose = drive.getPose();
@@ -257,10 +272,11 @@ public class Vision extends SubsystemBase {
       return robotPose.getTranslation().getDistance(getTargetFieldPosition());
     }
 
+    if (!hasTarget()) return 0.0;
+
     // Fallback: ty-based geometry
     double ty = getTY();
     double angleRadians = Math.toRadians(Constants.VisionConstants.CAMERA_PITCH_DEGREES + ty);
-
     if (Math.abs(angleRadians) < 1e-6) return 0.0;
 
     return (Constants.VisionConstants.TARGET_HEIGHT_METERS
@@ -289,5 +305,6 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("Vision/AngleTXDeg", getAngleToTargetTX().getDegrees());
     SmartDashboard.putNumber(
         "Vision/TXHubOffsetDeg", txOffsetDegrees); // how much TX is being corrected
+    SmartDashboard.putBoolean("Vision/InsideAllianceZone", inAllianceZone());
   }
 }
