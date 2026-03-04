@@ -45,6 +45,8 @@ public class Vision extends SubsystemBase {
 
   public Vision(Drive drive) {
     this.drive = drive;
+    String limelightURL = "http://10.43.11.11:5800/stream.mjpg";
+    SmartDashboard.putString("Limelight Stream", limelightURL);
   }
 
   // -----------------------------------------------------------------------
@@ -122,14 +124,17 @@ public class Vision extends SubsystemBase {
 
   /** Returns true when the robot is inside the alliance zone and can shoot. */
   public boolean inAllianceZone() {
-    var alliance = DriverStation.getAlliance().get();
+    var alliance = DriverStation.getAlliance();
     var blue = DriverStation.Alliance.Blue;
     var red = DriverStation.Alliance.Red;
-    if (alliance == blue
+    // checks if connected to driver station
+    if (alliance.isEmpty()) return false;
+    if (alliance.get() == blue
         && drive.getPose().getX() < Constants.VisionConstants.BLUE_ALLIANCE_ZONE_X) {
       return true;
     }
-    if (alliance == red && drive.getPose().getX() > Constants.VisionConstants.RED_ALLIANCE_ZONE_X) {
+    if (alliance.get() == red
+        && drive.getPose().getX() > Constants.VisionConstants.RED_ALLIANCE_ZONE_X) {
       return true;
     }
     return false; // nutmeg

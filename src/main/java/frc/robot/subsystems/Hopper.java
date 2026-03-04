@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +21,7 @@ public class Hopper extends SubsystemBase {
 
   private final TalonFX conveyorMotor = new TalonFX(Constants.HopperConstants.M_HOPPER_ID);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
+  private final NeutralOut neutralRequest = new NeutralOut();
 
   public Hopper() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -51,7 +53,7 @@ public class Hopper extends SubsystemBase {
   }
 
   public void stop() {
-    conveyorMotor.stopMotor();
+    conveyorMotor.setControl(neutralRequest);
   }
 
   /**

@@ -243,17 +243,9 @@ public final class Constants {
     // fuck you
 
     // fill in this data
-    /* ┗┻┻┻┻┻┻┻┻┻┻┻┻┻┻┻┫
-     *                 ┃
-     *                 ┃
-     *                 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-     */
-    //                                  ┃
-    //                                            ┃
-    //                                            ┃
-    public static final TreeMap<Double, /*        ┃ */ Double> SHOT_MAP = new TreeMap<>();
-    // format: distanceMeters, rotationsPerSecond  ┃
-    static { //             ⬐――――――――――――――――――――┚
+    public static final TreeMap<Double, Double> SHOT_MAP = new TreeMap<>();
+    // format: distanceMeters, rotationsPerSecond
+    static {
       SHOT_MAP.put(1.5, 55.0);
       SHOT_MAP.put(2.0, 63.0);
       SHOT_MAP.put(2.5, 70.0);

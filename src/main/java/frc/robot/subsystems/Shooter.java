@@ -166,6 +166,5 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber(
         "Shooter/BottomStatorAmps", m_leftShooter.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/TestVoltage", 0.0);
-    SmartDashboard.putNumber("Shooter/TestRPS", 0.0);
   }
 }
