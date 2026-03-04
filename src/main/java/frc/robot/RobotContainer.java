@@ -232,9 +232,16 @@ public class RobotContainer {
             Commands.run(() -> kicker.runPercent(0.5), kicker)); // change this value if you want
 
     // runs hopper
-
+    controller
+        .povRight()
+        .whileTrue(
+            Commands.run(() -> hopper.runPercent(0.5),hopper).finallyDo(() -> hopper.stop()));
     // runs intakeroller
-
+    controller
+    .povLeft()
+    .onTrue(
+        Commands.run(() -> intakeRoller.runPercent(0.5),intakeRoller).finallyDo(()->intakeRoller.stop()));
+    
     // runs shooter
     controller
         .rightTrigger()
