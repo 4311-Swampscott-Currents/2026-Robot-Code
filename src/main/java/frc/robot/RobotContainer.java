@@ -229,7 +229,8 @@ public class RobotContainer {
     controller
         .start()
         .whileTrue(
-            Commands.run(() -> kicker.runPercent(0.5), kicker)); // change this value if you want
+            Commands.run(() -> kicker.runPercent(0.5), kicker)
+                .finallyDo(() -> kicker.stop())); // change this value if you want
 
     // runs hopper
     controller
