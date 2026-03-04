@@ -68,6 +68,10 @@ public class IntakeArm extends SubsystemBase {
   // -----------------------------------------------------------------------
   // State tracking
   // -----------------------------------------------------------------------
+  /**
+   * Tracks the current state of the intake arm for use in RobotContainer button bindings and
+   * dashboard display.
+   */
   public enum ArmState {
     DEPLOYED,
     RETRACTED,
@@ -249,7 +253,10 @@ public class IntakeArm extends SubsystemBase {
         .finallyDo(() -> stop());
   }
 
-  /** Performs acts of witchcraft and heresy against the Omnissiah */
+  /**
+   * Performs acts of witchcraft and heresy against the Omnissiah Wont work in practice, use
+   * Commands.either in RobotContainer instead
+   */
   public Command toggleDeploy() {
     if (currentState == ArmState.DEPLOYED || currentState == ArmState.DEPLOYING) {
       return retractCommand();
@@ -290,18 +297,24 @@ public class IntakeArm extends SubsystemBase {
     return adjusted;
   }
 
+  /** Returns true if the encoder is connected and reporting a valid value. */
   public boolean isEncoderConnected() {
     return throughBoreEncoder.isConnected();
   }
 
+  /**
+   * Returns the current state of the intake arm (DEPLOYED, RETRACTED, DEPLOYING, or RETRACTING).
+   */
   public ArmState getCurrentState() {
     return currentState;
   }
 
+  /** Returns true if the arm is currently in the DEPLOYED state. */
   public boolean isDeployed() {
     return currentState == ArmState.DEPLOYED;
   }
 
+  /** Returns true if the arm is currently in the RETRACTED state. */
   public boolean isRetracted() {
     return currentState == ArmState.RETRACTED;
   }

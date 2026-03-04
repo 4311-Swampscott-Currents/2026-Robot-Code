@@ -13,9 +13,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutoAimCommands;
@@ -23,6 +23,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.IntakeArm;
+import frc.robot.subsystems.IntakeArm.ArmState;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
@@ -204,19 +205,21 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // Shoot while holding right bumper
+    // Shoot while holding right bumper by enabling the kicker, shooter needs to already be running
     controller
         .rightBumper()
-        .whileTrue(new RunCommand(() -> kicker.kick(), kicker))
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  shooter.stop();
-                  kicker.stop();
-                },
-                shooter,
-                kicker));
-    controller.leftTrigger().onTrue(intakeArm.toggleDeploy());
+        .whileTrue(Commands.run(() -> kicker.kick(), kicker).finallyDo(() -> kicker.stop()));
+
+    controller
+        .leftTrigger()
+        .onTrue(
+            Commands.either(
+                intakeArm.retractCommand(),
+                intakeArm.deployCommand(),
+                () ->
+                    (intakeArm.isDeployed() || intakeArm.getCurrentState() == ArmState.DEPLOYING)));
+
+    // controller.leftTrigger().onTrue(intakeArm.toggleDeploy());
 
     // tests deploy and retract commands by themselves
     controller.povUp().onTrue(intakeArm.retractCommand());
@@ -233,7 +236,13 @@ public class RobotContainer {
     // runs intakeroller
 
     // runs shooter
-
+    controller
+        .rightTrigger()
+        .whileTrue(
+            Commands.run(
+                    () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0.0)),
+                    shooter)
+                .finallyDo(() -> shooter.stop()));
   }
 
   public Pose2d updatePose() {

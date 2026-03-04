@@ -77,17 +77,17 @@ public class Shooter extends SubsystemBase {
     // Coast so flywheels spin down naturally — never brake a spinning flywheel
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    // Top motor: positive command = shoots forward
+    // Right motor: positive command = shoots forward
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     m_rightShooter.getConfigurator().apply(config);
 
-    // Bottom motor: same current limits, coast neutral
+    // Left motor: same current limits, coast neutral
     // Direction is handled by the Follower request (opposeMasterDirection)
     // so inversion here doesn't matter — but set it consistently anyway
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     m_leftShooter.getConfigurator().apply(config);
 
-    // Lock the bottom motor into follower mode.
+    // Lock the left motor into follower mode.
     // This persists until you call stopMotor() or send a different request.
     m_leftShooter.setControl(followerRequest);
   }
@@ -97,8 +97,8 @@ public class Shooter extends SubsystemBase {
   // -----------------------------------------------------------------------
 
   /**
-   * Spin the flywheels to the target speed in rotations per second. Only the top motor is commanded
-   * — the bottom follows automatically.
+   * Spin the flywheels to the target speed in rotations per second. Only the right motor is
+   * commanded — the left follows automatically.
    *
    * @param rps Target speed (positive = shoot direction)
    */
@@ -166,5 +166,6 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber(
         "Shooter/BottomStatorAmps", m_leftShooter.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/TestVoltage", 0.0);
+    SmartDashboard.putNumber("Shooter/TestRPS", 0.0);
   }
 }
