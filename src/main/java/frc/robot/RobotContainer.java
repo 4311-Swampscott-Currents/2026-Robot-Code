@@ -235,7 +235,6 @@ public class RobotContainer {
     controller
         .povRight()
         .whileTrue(
-<<<<<<< HEAD
             Commands.run(() -> hopper.runPercent(0.5), hopper).finallyDo(() -> hopper.stop()));
     // runs intakeroller
     controller
@@ -244,15 +243,6 @@ public class RobotContainer {
             Commands.run(() -> intakeRoller.runPercent(0.5), intakeRoller)
                 .finallyDo(() -> intakeRoller.stop()));
 
-=======
-            Commands.run(() -> hopper.runPercent(0.5),hopper).finallyDo(() -> hopper.stop()));
-    // runs intakeroller
-    controller
-    .povLeft()
-    .onTrue(
-        Commands.run(() -> intakeRoller.runPercent(0.5),intakeRoller).finallyDo(()->intakeRoller.stop()));
-    
->>>>>>> 3bb311f9d221ae87d331c4c53c2ee43bdfc88233
     // runs shooter
     controller
         .rightTrigger()
