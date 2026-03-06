@@ -43,8 +43,8 @@ public final class Constants {
   // Shooter
   // -----------------------------------------------------------------------
   public static final class ShooterConstants {
-    public static final int M_RIGHT_SHOOTER_ID = 10;
-    public static final int M_LEFT_SHOOTER_ID = 11;
+    public static final int M_RIGHT_SHOOTER_ID = 14;
+    public static final int M_LEFT_SHOOTER_ID = 15;
 
     // Velocity PID (Phoenix 6 Slot 0) — units: rot/sec
     // kV is the most critical gain. Characterize first via SysId or manual sweep.
@@ -59,16 +59,16 @@ public final class Constants {
 
     // Current limits
     // Flywheels can draw high current during spin-up; 80A stator keeps them safe
-    // during sustained operation. Supply limit protects the 60A PDH breaker.
+    // during sustained operation. Supply limit protects the 40A PDH breaker.
     public static final double STATOR_CURRENT_LIMIT = 80.0; // amps
-    public static final double SUPPLY_CURRENT_LIMIT = 60.0; // amps
+    public static final double SUPPLY_CURRENT_LIMIT = 40.0; // amps
   }
 
   // -----------------------------------------------------------------------
   // Kicker
   // -----------------------------------------------------------------------
   public static final class KickerConstants {
-    public static final int M_KICKER_ID = 12;
+    public static final int M_KICKER_ID = 16;
     public static final double KICK_PERCENT = 1.0;
 
     // Current limits
@@ -82,7 +82,7 @@ public final class Constants {
   // Hopper / Conveyor
   // -----------------------------------------------------------------------
   public static final class HopperConstants {
-    public static final int M_HOPPER_ID = 13;
+    public static final int M_HOPPER_ID = 17;
     public static final double FORWARD_PERCENT = 0.6;
     public static final double REVERSE_PERCENT = -0.4;
 
@@ -96,7 +96,7 @@ public final class Constants {
   // Intake Arm (pivot)
   // -----------------------------------------------------------------------
   public static final class IntakeArmConstants {
-    public static final int PIVOT_MOTOR_ID = 20;
+    public static final int PIVOT_MOTOR_ID = 18;
 
     public static final int THROUGH_BORE_DIO_PORT = 0;
     public static final boolean ENCODER_INVERTED = false;
@@ -144,7 +144,7 @@ public final class Constants {
   // Intake Roller
   // -----------------------------------------------------------------------
   public static final class IntakeRollerConstants {
-    public static final int M_Intake_Roller_ID = 22;
+    public static final int M_Intake_Roller_ID = 19;
     public static final double INTAKE_PERCENT = 0.8;
     public static final double EJECT_PERCENT = -0.5;
 

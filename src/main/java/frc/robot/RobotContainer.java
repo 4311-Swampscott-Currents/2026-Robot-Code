@@ -205,11 +205,22 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // Shoot while holding right bumper by enabling the kicker, shooter needs to already be running
+    // Shoot while holding right bumper by enabling the kicker and hopper, shooter needs to already
+    // be running
     controller
         .rightBumper()
-        .whileTrue(Commands.run(() -> kicker.kick(), kicker).finallyDo(() -> kicker.stop()));
+        .whileTrue(
+            Commands.parallel(
+                    Commands.run(() -> kicker.kick(), kicker),
+                    Commands.run(() -> hopper.runForward(), hopper))
+                .finallyDo(
+                    () -> {
+                      kicker.stop();
+                      hopper.stop();
+                    }));
 
+    // Move intake arm either deploy or retract when left trigger is pressed, depending on current
+    // state
     controller
         .leftTrigger()
         .onTrue(
