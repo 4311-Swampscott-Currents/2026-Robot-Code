@@ -59,6 +59,8 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     TalonFXConfiguration config = new TalonFXConfiguration();
 
+    SmartDashboard.putNumber("Shooter/TestRPS", 0.0);
+
     // --- Velocity PID (Slot 0) ---
     config.Slot0.kP = Constants.ShooterConstants.kP;
     config.Slot0.kI = Constants.ShooterConstants.kI;
@@ -78,7 +80,7 @@ public class Shooter extends SubsystemBase {
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     // Right motor: positive command = shoots forward
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     m_rightShooter.getConfigurator().apply(config);
 
     // Left motor: same current limits, coast neutral

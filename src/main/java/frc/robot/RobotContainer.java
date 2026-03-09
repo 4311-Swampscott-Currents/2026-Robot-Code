@@ -23,7 +23,6 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.IntakeArm;
-import frc.robot.subsystems.IntakeArm.ArmState;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
@@ -126,10 +125,10 @@ public class RobotContainer {
     // pathplanner commands
     NamedCommands.registerCommand("Deploy Intake", intakeArm.deployCommand());
     NamedCommands.registerCommand("Retract Intake", intakeArm.retractCommand());
-    NamedCommands.registerCommand(
-        "Intake Balls", Commands.runOnce(() -> intakeRoller.intake(), intakeRoller));
-    NamedCommands.registerCommand(
-        "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
+    // NamedCommands.registerCommand(
+    //     "Intake Balls", Commands.runOnce(() -> intakeRoller.intake(), intakeRoller));
+    // NamedCommands.registerCommand(
+    //     "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
     NamedCommands.registerCommand("Spin Shooter", shooter.shootWithRPS(vision));
     NamedCommands.registerCommand("Stop Shooting", Commands.runOnce(() -> shooter.stop(), shooter));
     NamedCommands.registerCommand(
@@ -221,20 +220,24 @@ public class RobotContainer {
 
     // Move intake arm either deploy or retract when left trigger is pressed, depending on current
     // state
-    controller
-        .leftTrigger()
-        .onTrue(
-            Commands.either(
-                intakeArm.retractCommand(),
-                intakeArm.deployCommand(),
-                () ->
-                    (intakeArm.isDeployed() || intakeArm.getCurrentState() == ArmState.DEPLOYING)));
+    // controller
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.either(
+    //             intakeArm.retractCommand(),
+    //             intakeArm.deployCommand(),
+    //             () ->
+    //                 (intakeArm.isDeployed() || intakeArm.getCurrentState() ==
+    // ArmState.DEPLOYING)));
 
     // controller.leftTrigger().onTrue(intakeArm.toggleDeploy());
 
     // tests deploy and retract commands by themselves
-    controller.povUp().onTrue(intakeArm.retractCommand());
-    controller.povDown().onTrue(intakeArm.deployCommand());
+    // controller.povUp().onTrue(intakeArm.retractCommand());
+    // controller.povDown().onTrue(intakeArm.deployCommand());
+
+    controller.povUp().whileTrue(intakeArm.manualCommand(0.2));
+    controller.povDown().whileTrue(intakeArm.manualCommand(-0.2));
 
     //  runs the kicker
     controller
@@ -250,9 +253,9 @@ public class RobotContainer {
             Commands.run(() -> hopper.runPercent(0.5), hopper).finallyDo(() -> hopper.stop()));
     // runs intakeroller
     controller
-        .povLeft()
-        .onTrue(
-            Commands.run(() -> intakeRoller.runPercent(0.5), intakeRoller)
+        .leftTrigger()
+        .whileTrue(
+            Commands.run(() -> intakeRoller.runPercent(0.75), intakeRoller)
                 .finallyDo(() -> intakeRoller.stop()));
 
     // runs shooter

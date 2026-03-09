@@ -36,7 +36,7 @@ public final class Constants {
   public static class CANBus {
     // public static final String RIO_CANBUS = "";
     // public static final CANBus Rio_CANBUS = new CANBus("rio", CANBus.roboRIO("rio"));
-    public static final String DRIVETRAIN_CANBUS = "Default Name";
+    public static final String DRIVETRAIN_CANBUS = "";
   }
 
   // -----------------------------------------------------------------------
@@ -75,7 +75,7 @@ public final class Constants {
     // Kicker runs in short bursts — 40A stator is plenty, 30A supply
     // keeps draw reasonable alongside the shooter motors
     public static final double STATOR_CURRENT_LIMIT = 40.0;
-    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 40.0;
   }
 
   // -----------------------------------------------------------------------
@@ -83,7 +83,7 @@ public final class Constants {
   // -----------------------------------------------------------------------
   public static final class HopperConstants {
     public static final int M_HOPPER_ID = 17;
-    public static final double FORWARD_PERCENT = 0.6;
+    public static final double FORWARD_PERCENT = 1;
     public static final double REVERSE_PERCENT = -0.4;
 
     // Current limits
@@ -246,12 +246,12 @@ public final class Constants {
     public static final TreeMap<Double, Double> SHOT_MAP = new TreeMap<>();
     // format: distanceMeters, rotationsPerSecond
     static {
-      SHOT_MAP.put(1.5, 55.0);
-      SHOT_MAP.put(2.0, 63.0);
-      SHOT_MAP.put(2.5, 70.0);
-      SHOT_MAP.put(3.0, 78.0);
-      SHOT_MAP.put(3.5, 85.0);
-      SHOT_MAP.put(4.0, 92.0);
+      SHOT_MAP.put(1.5, 25.0);
+      SHOT_MAP.put(2.0, 25.0);
+      SHOT_MAP.put(2.5, 25.0);
+      SHOT_MAP.put(3.0, 25.0);
+      SHOT_MAP.put(3.5, 25.0);
+      SHOT_MAP.put(4.0, 25.0);
     }
   }
 

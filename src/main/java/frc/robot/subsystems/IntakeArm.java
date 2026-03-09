@@ -5,7 +5,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -51,8 +50,8 @@ public class IntakeArm extends SubsystemBase {
   // Hardware
   // -----------------------------------------------------------------------
   private final TalonFX pivotMotor = new TalonFX(Constants.IntakeArmConstants.PIVOT_MOTOR_ID);
-  private final DutyCycleEncoder throughBoreEncoder =
-      new DutyCycleEncoder(Constants.IntakeArmConstants.THROUGH_BORE_DIO_PORT);
+  // private final DutyCycleEncoder throughBoreEncoder =
+  //     new DutyCycleEncoder(Constants.IntakeArmConstants.THROUGH_BORE_DIO_PORT);
 
   // -----------------------------------------------------------------------
   // Control requests
@@ -143,7 +142,7 @@ public class IntakeArm extends SubsystemBase {
    * constructor. Can be re-called via a button if encoder reading drifts after a hard impact.
    */
   public void seedMotorFromEncoder() {
-    pivotMotor.setPosition(getAbsolutePositionRotations());
+    // pivotMotor.setPosition(getAbsolutePositionRotations());
   }
 
   /**
@@ -283,24 +282,24 @@ public class IntakeArm extends SubsystemBase {
    * Absolute arm shaft position from the Through Bore encoder in rotations. Applies offset and
    * inversion from Constants. 0.0 = fully retracted.
    */
-  public double getAbsolutePositionRotations() {
-    double raw = throughBoreEncoder.get();
+  // public double getAbsolutePositionRotations() {
+  //   double raw = throughBoreEncoder.get();
 
-    if (Constants.IntakeArmConstants.ENCODER_INVERTED) raw = 1.0 - raw;
+  //   if (Constants.IntakeArmConstants.ENCODER_INVERTED) raw = 1.0 - raw;
 
-    double adjusted = raw - Constants.IntakeArmConstants.ENCODER_OFFSET;
+  //   double adjusted = raw - Constants.IntakeArmConstants.ENCODER_OFFSET;
 
-    // Normalize to handle wrap-around at the 0/1 boundary
-    while (adjusted < -0.5) adjusted += 1.0;
-    while (adjusted > 0.5) adjusted -= 1.0;
+  //   // Normalize to handle wrap-around at the 0/1 boundary
+  //   while (adjusted < -0.5) adjusted += 1.0;
+  //   while (adjusted > 0.5) adjusted -= 1.0;
 
-    return adjusted;
-  }
+  //   return adjusted;
+  // }
 
-  /** Returns true if the encoder is connected and reporting a valid value. */
-  public boolean isEncoderConnected() {
-    return throughBoreEncoder.isConnected();
-  }
+  // /** Returns true if the encoder is connected and reporting a valid value. */
+  // public boolean isEncoderConnected() {
+  //   return throughBoreEncoder.isConnected();
+  // }
 
   /**
    * Returns the current state of the intake arm (DEPLOYED, RETRACTED, DEPLOYING, or RETRACTING).
@@ -331,8 +330,8 @@ public class IntakeArm extends SubsystemBase {
     SmartDashboard.putNumber("Arm/PositionRot", getPositionRotations());
     SmartDashboard.putNumber("Arm/VelocityRPS", getVelocityRPS());
     SmartDashboard.putNumber("Arm/StatorAmps", getStatorAmps());
-    SmartDashboard.putNumber("Arm/ThroughBoreRaw", throughBoreEncoder.get());
-    SmartDashboard.putNumber("Arm/ThroughBoreAdjusted", getAbsolutePositionRotations());
-    SmartDashboard.putBoolean("Arm/EncoderConnected", isEncoderConnected());
+    // SmartDashboard.putNumber("Arm/ThroughBoreRaw", throughBoreEncoder.get());
+    // SmartDashboard.putNumber("Arm/ThroughBoreAdjusted", getAbsolutePositionRotations());
+    // SmartDashboard.putBoolean("Arm/EncoderConnected", isEncoderConnected());
   }
 }
