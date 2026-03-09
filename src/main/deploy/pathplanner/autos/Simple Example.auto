@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Over the Bump right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Collect Balls Right mid"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Retrun from mid right"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
