@@ -55,7 +55,7 @@ public final class Constants {
     public static final double kV = 0.12643; // volts per rot/sec — TUNE THIS
 
     // "At speed" tolerance (~50 RPM expressed in rot/sec)
-    public static final double TOLERANCE_RPS = 50.0 / 60.0;
+    public static final double TOLERANCE_RPS = 60.0 / 60.0;
 
     // Current limits
     // Flywheels can draw high current during spin-up; 80A stator keeps them safe
@@ -74,7 +74,7 @@ public final class Constants {
     // Current limits
     // Kicker runs in short bursts — 40A stator is plenty, 30A supply
     // keeps draw reasonable alongside the shooter motors
-    public static final double STATOR_CURRENT_LIMIT = 40.0;
+    public static final double STATOR_CURRENT_LIMIT = 60.0;
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
   }
 
@@ -84,7 +84,7 @@ public final class Constants {
   public static final class HopperConstants {
     public static final int M_HOPPER_ID = 17;
     public static final double FORWARD_PERCENT = 1;
-    public static final double REVERSE_PERCENT = -0.4;
+    public static final double REVERSE_PERCENT = -0.6;
 
     // Current limits
     // Light conveyor load, but may spike during ball jams

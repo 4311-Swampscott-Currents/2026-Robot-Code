@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.771058630019432,
-        "y": 1.0323845086532784
+        "x": 6.809478707189411,
+        "y": 1.0655779019513063
       },
       "isLocked": false,
       "linkedName": "OverBump"
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 7.836408582089552,
-        "y": 1.204384328358209
+        "y": 1.040807228915662
       },
       "prevControl": {
-        "x": 7.527925317939916,
-        "y": 0.7823198768841326
+        "x": 7.476353884398253,
+        "y": 0.7617248564055921
       },
       "nextControl": {
-        "x": 8.104413655580798,
-        "y": 1.5710668278032465
+        "x": 8.381541914630294,
+        "y": 1.4633460952471027
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 3.6014085820895527
       },
       "prevControl": {
-        "x": 7.783974118287781,
-        "y": 3.356969168316281
+        "x": 7.7272244434667545,
+        "y": 3.2569726287256118
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,8 +46,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.6585612968591691,
-      "rotationDegrees": 90.0
+      "waypointRelativePos": 0.4995850622406598,
+      "rotationDegrees": 110.0
     }
   ],
   "constraintZones": [],
@@ -63,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 110.0
   },
   "reversed": false,
   "folder": null,

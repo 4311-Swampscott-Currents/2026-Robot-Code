@@ -60,6 +60,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -218,6 +219,19 @@ public class RobotContainer {
                       hopper.stop();
                     }));
 
+    // Un jam, run everything in reverse
+    controller
+        .povLeft()
+        .whileTrue(
+            Commands.parallel(
+                    Commands.run(() -> kicker.runPercent(-1), kicker),
+                    Commands.run(() -> hopper.runReverse(), hopper))
+                .finallyDo(
+                    () -> {
+                      kicker.stop();
+                      hopper.stop();
+                    }));
+
     // Move intake arm either deploy or retract when left trigger is pressed, depending on current
     // state
     // controller
@@ -247,10 +261,10 @@ public class RobotContainer {
                 .finallyDo(() -> kicker.stop())); // change this value if you want
 
     // runs hopper
-    controller
-        .povRight()
-        .whileTrue(
-            Commands.run(() -> hopper.runPercent(0.5), hopper).finallyDo(() -> hopper.stop()));
+    // controller
+    //     .povRight()
+    //     .whileTrue(
+    //         Commands.run(() -> hopper.runPercent(0.5), hopper).finallyDo(() -> hopper.stop()));
     // runs intakeroller
     controller
         .leftTrigger()
