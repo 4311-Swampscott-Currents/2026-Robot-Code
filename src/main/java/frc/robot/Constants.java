@@ -36,7 +36,7 @@ public final class Constants {
   public static class CANBus {
     // public static final String RIO_CANBUS = "";
     // public static final CANBus Rio_CANBUS = new CANBus("rio", CANBus.roboRIO("rio"));
-    public static final String DRIVETRAIN_CANBUS = "";
+    public static final String DRIVETRAIN_CANBUS = "AllMotor";
   }
 
   // -----------------------------------------------------------------------
@@ -76,7 +76,7 @@ public final class Constants {
     // Kicker runs in short bursts — 40A stator is plenty, 30A supply
     // keeps draw reasonable alongside the shooter motors
     public static final double STATOR_CURRENT_LIMIT = 100.0;
-    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 40.0;
   }
 
   // -----------------------------------------------------------------------
@@ -89,7 +89,7 @@ public final class Constants {
 
     // Current limits
     // Light conveyor load, but may spike during ball jams
-    public static final double STATOR_CURRENT_LIMIT = 40.0;
+    public static final double STATOR_CURRENT_LIMIT = 60.0;
     public static final double SUPPLY_CURRENT_LIMIT = 30.0;
   }
 

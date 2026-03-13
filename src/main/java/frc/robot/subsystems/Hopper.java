@@ -9,6 +9,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.generated.TunerConstants;
 
 /**
  * HopperSubsystem
@@ -20,7 +21,8 @@ import frc.robot.Constants;
  */
 public class Hopper extends SubsystemBase {
 
-  private final TalonFX conveyorMotor = new TalonFX(Constants.HopperConstants.M_HOPPER_ID);
+  private final TalonFX conveyorMotor =
+      new TalonFX(Constants.HopperConstants.M_HOPPER_ID, TunerConstants.kCANBus);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
   private final NeutralOut neutralRequest = new NeutralOut();
 

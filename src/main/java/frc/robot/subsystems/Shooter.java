@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.AutoAimCommands;
+import frc.robot.generated.TunerConstants;
 
 /**
  * ShooterSubsystem
@@ -38,8 +39,10 @@ public class Shooter extends SubsystemBase {
   // -----------------------------------------------------------------------
   // Hardware
   // -----------------------------------------------------------------------
-  private final TalonFX m_rightShooter = new TalonFX(Constants.ShooterConstants.M_RIGHT_SHOOTER_ID);
-  private final TalonFX m_leftShooter = new TalonFX(Constants.ShooterConstants.M_LEFT_SHOOTER_ID);
+  private final TalonFX m_rightShooter =
+      new TalonFX(Constants.ShooterConstants.M_RIGHT_SHOOTER_ID, TunerConstants.kCANBus);
+  private final TalonFX m_leftShooter =
+      new TalonFX(Constants.ShooterConstants.M_LEFT_SHOOTER_ID, TunerConstants.kCANBus);
 
   // Command only the top motor — left follows automatically
   private final VelocityVoltage velocityRequest =

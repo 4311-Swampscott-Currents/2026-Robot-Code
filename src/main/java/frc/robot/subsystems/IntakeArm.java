@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.generated.TunerConstants;
 
 /**
  * IntakeArmSubsystem
@@ -49,7 +50,8 @@ public class IntakeArm extends SubsystemBase {
   // -----------------------------------------------------------------------
   // Hardware
   // -----------------------------------------------------------------------
-  private final TalonFX pivotMotor = new TalonFX(Constants.IntakeArmConstants.PIVOT_MOTOR_ID);
+  private final TalonFX pivotMotor =
+      new TalonFX(Constants.IntakeArmConstants.PIVOT_MOTOR_ID, TunerConstants.kCANBus);
   // private final DutyCycleEncoder throughBoreEncoder =
   //     new DutyCycleEncoder(Constants.IntakeArmConstants.THROUGH_BORE_DIO_PORT);
 

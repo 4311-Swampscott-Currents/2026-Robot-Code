@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.generated.TunerConstants;
 
 /**
  * KickerSubsystem
@@ -22,8 +23,10 @@ import frc.robot.Constants;
  */
 public class Kicker extends SubsystemBase {
 
-  private final TalonFX kickerLeftMotor = new TalonFX(Constants.KickerConstants.M_KICKER_LEFT_ID);
-  private final TalonFX kickerRightMotor = new TalonFX(Constants.KickerConstants.M_KICKER_RIGHT_ID);
+  private final TalonFX kickerLeftMotor =
+      new TalonFX(Constants.KickerConstants.M_KICKER_LEFT_ID, TunerConstants.kCANBus);
+  private final TalonFX kickerRightMotor =
+      new TalonFX(Constants.KickerConstants.M_KICKER_RIGHT_ID, TunerConstants.kCANBus);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
   private final Follower followRequest =
       new Follower(Constants.KickerConstants.M_KICKER_LEFT_ID, MotorAlignmentValue.Opposed);
