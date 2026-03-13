@@ -244,6 +244,23 @@ public class RobotContainer {
                       hopper.stop();
                     }));
 
+    // alternate sequence to enable kicker and hopper while holding right bumper, shooter needs to
+    // already be running
+    // needs to be tested to see if it works better than the above
+    // controller
+    //     .rightBumper()
+    //     .whileTrue(
+    //         Commands.parallel(
+    //                 Commands.run(() -> kicker.kick(), kicker),
+    //                 Commands.sequence(
+    //                     Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.2),
+    //                     Commands.run(() -> hopper.runForward(), hopper)))
+    //             .finallyDo(
+    //                 () -> {
+    //                   kicker.stop();
+    //                   hopper.stop();
+    //                 }));
+
     // Un jam, run everything in reverse
     controller
         .povLeft()
