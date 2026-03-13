@@ -2,8 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,8 +22,11 @@ import frc.robot.Constants;
  */
 public class Kicker extends SubsystemBase {
 
-  private final TalonFX kickerMotor = new TalonFX(Constants.KickerConstants.M_KICKER_ID);
+  private final TalonFX kickerLeftMotor = new TalonFX(Constants.KickerConstants.M_KICKER_LEFT_ID);
+  private final TalonFX kickerRightMotor = new TalonFX(Constants.KickerConstants.M_KICKER_RIGHT_ID);
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
+  private final Follower followRequest =
+      new Follower(Constants.KickerConstants.M_KICKER_LEFT_ID, MotorAlignmentValue.Opposed);
   private final NeutralOut neutralRequest = new NeutralOut();
 
   public Kicker() {
@@ -36,27 +41,38 @@ public class Kicker extends SubsystemBase {
     // Brake: prevents coasting from accidentally feeding a ball
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    kickerMotor.getConfigurator().apply(config);
+    kickerLeftMotor.getConfigurator().apply(config);
+
+    kickerRightMotor.getConfigurator().apply(config);
+
+    kickerRightMotor.setControl(followRequest);
   }
 
   /** Run kicker at full speed to feed a ball. */
   public void kick() {
-    kickerMotor.setControl(dutyCycleRequest.withOutput(Constants.KickerConstants.KICK_PERCENT));
+    kickerLeftMotor.setControl(dutyCycleRequest.withOutput(Constants.KickerConstants.KICK_PERCENT));
   }
 
   /** Run at a custom duty cycle. Negative = reverse (unjam). */
   public void runPercent(double percent) {
-    kickerMotor.setControl(dutyCycleRequest.withOutput(percent));
+    kickerLeftMotor.setControl(dutyCycleRequest.withOutput(percent));
   }
 
   public void stop() {
-    kickerMotor.setControl(neutralRequest);
+    kickerLeftMotor.setControl(neutralRequest);
+    kickerRightMotor.setControl(neutralRequest);
+    kickerLeftMotor.setControl(followRequest);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Kicker/OutputPercent", kickerMotor.getDutyCycle().getValueAsDouble());
     SmartDashboard.putNumber(
-        "Kicker/StatorAmps", kickerMotor.getStatorCurrent().getValueAsDouble());
+        "Kicker/LeftOutputPercent", kickerLeftMotor.getDutyCycle().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Kicker/LeftStatorAmps", kickerLeftMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Kicker/RightOutputPercent", kickerRightMotor.getDutyCycle().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Kicker/RightStatorAmps", kickerRightMotor.getStatorCurrent().getValueAsDouble());
   }
 }

@@ -68,14 +68,15 @@ public final class Constants {
   // Kicker
   // -----------------------------------------------------------------------
   public static final class KickerConstants {
-    public static final int M_KICKER_ID = 16;
+    public static final int M_KICKER_LEFT_ID = 16;
+    public static final int M_KICKER_RIGHT_ID = 20;
     public static final double KICK_PERCENT = 1.0;
 
     // Current limits
     // Kicker runs in short bursts — 40A stator is plenty, 30A supply
     // keeps draw reasonable alongside the shooter motors
-    public static final double STATOR_CURRENT_LIMIT = 60.0;
-    public static final double SUPPLY_CURRENT_LIMIT = 40.0;
+    public static final double STATOR_CURRENT_LIMIT = 100.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
   }
 
   // -----------------------------------------------------------------------

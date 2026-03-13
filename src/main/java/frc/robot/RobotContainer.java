@@ -55,6 +55,10 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
+  /* do you want a second controller? if so, call (+1) 248-434-5508 and uncomment this code!           */
+
+  // private final CommandXboxController intakeController = new CommandXboxController(1);
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -126,14 +130,35 @@ public class RobotContainer {
     // pathplanner commands
     NamedCommands.registerCommand("Deploy Intake", intakeArm.deployCommand());
     NamedCommands.registerCommand("Retract Intake", intakeArm.retractCommand());
-    // NamedCommands.registerCommand(
-    //     "Intake Balls", Commands.runOnce(() -> intakeRoller.intake(), intakeRoller));
-    // NamedCommands.registerCommand(
-    //     "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
+    NamedCommands.registerCommand(
+        "Intake Balls",
+        Commands.run(() -> intakeRoller.intake(), intakeRoller)
+            .finallyDo(() -> intakeRoller.stop()));
+    NamedCommands.registerCommand(
+        "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
     NamedCommands.registerCommand("Spin Shooter", shooter.shootWithRPS(vision));
     NamedCommands.registerCommand("Stop Shooting", Commands.runOnce(() -> shooter.stop(), shooter));
     NamedCommands.registerCommand(
-        "Spin Kicker When Shooting", Commands.waitUntil(shooter::atSetpoint).andThen(kicker::kick));
+        "Spin Kicker/Indexer When Shooting",
+        Commands.waitUntil(shooter::atSetpoint)
+            .andThen(
+                Commands.parallel(
+                        Commands.run(() -> kicker.kick(), kicker),
+                        Commands.run(() -> hopper.runForward(), hopper).withTimeout(5))
+                    .finallyDo(
+                        () -> {
+                          kicker.stop();
+                          hopper.stop();
+                        })));
+    NamedCommands.registerCommand(
+        "Stop Kicker and Indexer",
+        Commands.runOnce(
+            () -> {
+              kicker.stop();
+              hopper.stop();
+            },
+            kicker,
+            hopper));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
