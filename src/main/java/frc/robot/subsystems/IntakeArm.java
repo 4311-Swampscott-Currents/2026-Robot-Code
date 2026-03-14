@@ -156,7 +156,7 @@ public class IntakeArm extends SubsystemBase {
    * <p>Position is the primary condition. Stall is the backup if encoder drifts.
    */
   public boolean isAtDeployedStop() {
-    boolean atPosition = getPositionRotations() >= Constants.IntakeArmConstants.DEPLOYED_POSITION;
+    boolean atPosition = getPositionRotations() <= Constants.IntakeArmConstants.DEPLOYED_POSITION;
     return atPosition || isStalled();
   }
 
@@ -166,7 +166,7 @@ public class IntakeArm extends SubsystemBase {
    * <p>Same logic as isAtDeployedStop() but in the retract direction.
    */
   public boolean isAtRetractedStop() {
-    boolean atPosition = getPositionRotations() <= Constants.IntakeArmConstants.RETRACTED_POSITION;
+    boolean atPosition = getPositionRotations() >= Constants.IntakeArmConstants.RETRACTED_POSITION;
     return atPosition || isStalled();
   }
 
@@ -258,12 +258,12 @@ public class IntakeArm extends SubsystemBase {
    * Performs acts of witchcraft and heresy against the Omnissiah Wont work in practice, use
    * Commands.either in RobotContainer instead
    */
-  public Command toggleDeploy() {
-    if (currentState == ArmState.DEPLOYED || currentState == ArmState.DEPLOYING) {
-      return retractCommand();
-    }
-    return deployCommand();
-  }
+  // public Command toggleDeploy() {
+  //   if (currentState == ArmState.DEPLOYED || currentState == ArmState.DEPLOYING) {
+  //     return retractCommand();
+  //   }
+  //   return deployCommand();
+  // }
 
   /** Motor velocity in arm shaft RPS (gear ratio applied). */
   public double getVelocityRPS() {
@@ -278,6 +278,15 @@ public class IntakeArm extends SubsystemBase {
   /** Motor stator current in amps. */
   public double getStatorAmps() {
     return pivotMotor.getStatorCurrent().getValueAsDouble();
+  }
+
+  /**
+   * Sets motor position to 0
+   *
+   * <p>Use at the begining of auto to reset motor position.
+   */
+  public void resetMotorPosition() {
+    pivotMotor.setPosition(0);
   }
 
   /**

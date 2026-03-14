@@ -48,7 +48,7 @@ public final class Constants {
 
     // Velocity PID (Phoenix 6 Slot 0) — units: rot/sec
     // kV is the most critical gain. Characterize first via SysId or manual sweep.
-    public static final double kP = 0.50;
+    public static final double kP = 0.80;
     public static final double kI = 0.00;
     public static final double kD = 0.00;
     public static final double kS = 0.2; // static friction (volts)
@@ -60,7 +60,7 @@ public final class Constants {
     // Current limits
     // Flywheels can draw high current during spin-up; 80A stator keeps them safe
     // during sustained operation. Supply limit protects the 40A PDH breaker.
-    public static final double STATOR_CURRENT_LIMIT = 80.0; // amps
+    public static final double STATOR_CURRENT_LIMIT = 90.0; // amps
     public static final double SUPPLY_CURRENT_LIMIT = 40.0; // amps
   }
 
@@ -109,14 +109,14 @@ public final class Constants {
     // Stop positions in arm shaft rotations
     // With 125:1 the arm moves very slowly — full range might be
     // only 0.1-0.2 arm shaft rotations for a typical intake pivot
-    public static final double DEPLOYED_POSITION = 0.15; // TUNE!
-    public static final double RETRACTED_POSITION = 0.01; // TUNE!
+    public static final double DEPLOYED_POSITION = 0.00; // TUNE!
+    public static final double RETRACTED_POSITION = 0.22; // TUNE!
 
     // Soft limits — TalonFX hardware safety net, operates independently of
     // command logic. If stall detection fails entirely, the motor cuts out
     // before the arm damages itself or the gearbox.
-    public static final double SOFT_LIMIT_MAX = 0.29; // TUNE!
-    public static final double SOFT_LIMIT_MIN = 0.00;
+    public static final double SOFT_LIMIT_MAX = 0.26; // TUNE!
+    public static final double SOFT_LIMIT_MIN = -0.05;
 
     // Duty cycle for movement
     // With 125:1 even a small duty cycle produces enormous torque

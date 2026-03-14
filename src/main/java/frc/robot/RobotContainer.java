@@ -53,11 +53,11 @@ public class RobotContainer {
   // private static Pose2d robotPose;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverController = new CommandXboxController(0);
 
   /* do you want a second controller? if so, call (+1) 248-434-5508 and uncomment this code!           */
 
-  // private final CommandXboxController intakeController = new CommandXboxController(1);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -190,37 +190,43 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // driverController bindings
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Auto-aim and shoot while holding left bumper
-    controller
+    driverController
         .leftBumper()
         .whileTrue(
             AutoAimCommands.autoAimPoseBased(
-                drive, vision, shooter, () -> -controller.getLeftY(), () -> -controller.getLeftX())
+                drive,
+                vision,
+                shooter,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX())
             /* .alongWith(shooter.shootWithRPS(vision))*/ );
 
     // Lock to 0° when A button is held
-    controller
+    driverController
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
                 () -> Rotation2d.kZero));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    driverController
         .b()
         .onTrue(
             Commands.runOnce(
@@ -232,7 +238,7 @@ public class RobotContainer {
 
     // Shoot while holding right bumper by enabling the kicker and hopper, shooter needs to already
     // be running
-    controller
+    driverController
         .rightBumper()
         .whileTrue(
             Commands.parallel(
@@ -247,7 +253,8 @@ public class RobotContainer {
     // alternate sequence to enable kicker and hopper while holding right bumper, shooter needs to
     // already be running
     // needs to be tested to see if it works better than the above
-    // controller
+    // spins kicker forward, and hopper back, then spins hopper forward
+    // driverController
     //     .rightBumper()
     //     .whileTrue(
     //         Commands.parallel(
@@ -260,9 +267,24 @@ public class RobotContainer {
     //                   kicker.stop();
     //                   hopper.stop();
     //                 }));
+    // spins kicker forward while pulsating the hopper back and forth
+    // driverController
+    //     .rightBumper()
+    //     .whileTrue(
+    //         Commands.parallel(
+    //                 Commands.run(() -> kicker.kick(), kicker),
+    //                 Commands.sequence(
+    //                         Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.2),
+    //                         Commands.run(() -> hopper.runForward(), hopper).withTimeout(0.25))
+    //                     .repeatedly())
+    //             .finallyDo(
+    //                 () -> {
+    //                   kicker.stop();
+    //                   hopper.stop();
+    //                 }));
 
     // Un jam, run everything in reverse
-    controller
+    driverController
         .povLeft()
         .whileTrue(
             Commands.parallel(
@@ -276,7 +298,7 @@ public class RobotContainer {
 
     // Move intake arm either deploy or retract when left trigger is pressed, depending on current
     // state
-    // controller
+    // driverController
     //     .leftTrigger()
     //     .onTrue(
     //         Commands.either(
@@ -286,47 +308,82 @@ public class RobotContainer {
     //                 (intakeArm.isDeployed() || intakeArm.getCurrentState() ==
     // ArmState.DEPLOYING)));
 
-    // controller.leftTrigger().onTrue(intakeArm.toggleDeploy());
+    // driverController.leftTrigger().onTrue(intakeArm.toggleDeploy());
 
     // tests deploy and retract commands by themselves
-    // controller.povUp().onTrue(intakeArm.retractCommand());
-    // controller.povDown().onTrue(intakeArm.deployCommand());
+    // driverController.povUp().onTrue(intakeArm.retractCommand());
+    // driverController.povDown().onTrue(intakeArm.deployCommand());
 
-    controller.povUp().whileTrue(intakeArm.manualCommand(0.2));
-    controller.povDown().whileTrue(intakeArm.manualCommand(-0.2));
+    driverController.povUp().whileTrue(intakeArm.manualCommand(0.2));
+    driverController.povDown().whileTrue(intakeArm.manualCommand(-0.2));
 
     //  runs the kicker
-    controller
+    driverController
         .start()
         .whileTrue(
             Commands.run(() -> kicker.runPercent(0.5), kicker)
                 .finallyDo(() -> kicker.stop())); // change this value if you want
 
     // runs hopper
-    // controller
+    // driverController
     //     .povRight()
     //     .whileTrue(
     //         Commands.run(() -> hopper.runPercent(0.5), hopper).finallyDo(() -> hopper.stop()));
     // runs intakeroller
-    controller
+    driverController
         .leftTrigger()
         .whileTrue(
             Commands.run(() -> intakeRoller.runPercent(0.75), intakeRoller)
                 .finallyDo(() -> intakeRoller.stop()));
 
     // runs shooter
-    controller
+    driverController
         .rightTrigger()
         .whileTrue(
             Commands.run(
                     () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0.0)),
                     shooter)
                 .finallyDo(() -> shooter.stop()));
+
+    // operator bindings
+    // operatorController.leftTrigger();
+    // operatorController.leftBumper();
+    // operatorController.rightTrigger();
+    // operatorController.rightBumper();
+    // operatorController.a();
+    // operatorController.b();
+    // operatorController.x();
+    // operatorController.y();
+    // operatorController.povUp();
+    // operatorController.povDown();
+
+    // runs everything backwards
+    // operatorController
+    //     .povLeft()
+    //     .whileTrue(
+    //         Commands.parallel(
+    //                 Commands.run(() -> kicker.runPercent(-1), kicker),
+    //                 Commands.run(() -> hopper.runReverse(), hopper),
+    //                 Commands.run(() -> intakeRoller.eject(), intakeRoller))
+    //             .finallyDo(
+    //                 () -> {
+    //                   kicker.stop();
+    //                   hopper.stop();
+    //                   intakeRoller.stop();
+    //                 }));
+
+    // operatorController.povRight();
+
   }
 
   public Pose2d updatePose() {
     return drive.getPose();
   }
+
+  /** Sets pivot motor to 0 */
+  //   public void resetPivotMotor() {
+  //     intakeArm.resetMotorPosition();
+  //   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
