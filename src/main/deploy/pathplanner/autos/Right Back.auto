@@ -1,0 +1,44 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Back"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Kicker/Indexer When Shooting"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -64,7 +64,7 @@ public class Kicker extends SubsystemBase {
   public void stop() {
     kickerLeftMotor.setControl(neutralRequest);
     kickerRightMotor.setControl(neutralRequest);
-    kickerLeftMotor.setControl(followRequest);
+    kickerRightMotor.setControl(followRequest);
   }
 
   @Override

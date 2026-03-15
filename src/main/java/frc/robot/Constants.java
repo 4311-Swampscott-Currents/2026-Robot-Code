@@ -55,7 +55,7 @@ public final class Constants {
     public static final double kV = 0.12643; // volts per rot/sec — TUNE THIS
 
     // "At speed" tolerance (~50 RPM expressed in rot/sec)
-    public static final double TOLERANCE_RPS = 60.0 / 60.0;
+    public static final double TOLERANCE_RPS = 120.0 / 60.0;
 
     // Current limits
     // Flywheels can draw high current during spin-up; 80A stator keeps them safe
@@ -109,8 +109,9 @@ public final class Constants {
     // Stop positions in arm shaft rotations
     // With 125:1 the arm moves very slowly — full range might be
     // only 0.1-0.2 arm shaft rotations for a typical intake pivot
-    public static final double DEPLOYED_POSITION = 0.00; // TUNE!
-    public static final double RETRACTED_POSITION = 0.22; // TUNE!
+    public static final double DEPLOYED_POSITION = 0.22; // TUNE!
+    public static final double RETRACTED_POSITION = 0.00; // TUNE!
+    public static final double SHOOTER_HELP_Position = 0.11;
 
     // Soft limits — TalonFX hardware safety net, operates independently of
     // command logic. If stall detection fails entirely, the motor cuts out
@@ -121,7 +122,7 @@ public final class Constants {
     // Duty cycle for movement
     // With 125:1 even a small duty cycle produces enormous torque
     // Start very low and increase carefully — the arm will be powerful
-    public static final double DEPLOY_DUTY_CYCLE = 0.15; // TUNE! — start low with 125:1
+    public static final double DEPLOY_DUTY_CYCLE = 0.2; // TUNE! — start low with 125:1
     public static final double RETRACT_DUTY_CYCLE = -0.12; // TUNE!
 
     // ── Stop detection ────────────────────────────────────────────────
@@ -147,11 +148,11 @@ public final class Constants {
   public static final class IntakeRollerConstants {
     public static final int M_Intake_Roller_ID = 19;
     public static final double INTAKE_PERCENT = 0.8;
-    public static final double EJECT_PERCENT = -0.5;
+    public static final double EJECT_PERCENT = -0.8;
 
     // Current limits
     // Roller is lightly loaded but can spike on ball contact
-    public static final double STATOR_CURRENT_LIMIT = 40.0;
+    public static final double STATOR_CURRENT_LIMIT = 60.0;
     public static final double SUPPLY_CURRENT_LIMIT = 30.0;
   }
 
@@ -247,12 +248,16 @@ public final class Constants {
     public static final TreeMap<Double, Double> SHOT_MAP = new TreeMap<>();
     // format: distanceMeters, rotationsPerSecond
     static {
-      SHOT_MAP.put(1.5, 25.0);
-      SHOT_MAP.put(2.0, 25.0);
-      SHOT_MAP.put(2.5, 25.0);
-      SHOT_MAP.put(3.0, 25.0);
-      SHOT_MAP.put(3.5, 25.0);
-      SHOT_MAP.put(4.0, 25.0);
+      // SHOT_MAP.put(1.5, 25.0);
+      // SHOT_MAP.put(2.0, 25.0);
+      SHOT_MAP.put(1.69, 40.0);
+      SHOT_MAP.put(2.0, 45.0);
+      // SHOT_MAP.put(2.5, 25.0);
+      SHOT_MAP.put(2.6, 51.0);
+
+      // SHOT_MAP.put(3.0, 25.0);
+      SHOT_MAP.put(3.5, 55.0);
+      // SHOT_MAP.put(4.0, 25.0);
     }
   }
 

@@ -36,8 +36,8 @@ public class IntakeRoller extends SubsystemBase {
     config.CurrentLimits.SupplyCurrentLimit = Constants.IntakeRollerConstants.SUPPLY_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    // Coast: roller doesn't need to hold position
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    // Coast: roller doesn't need to hold position - claude is wrong
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     rollerMotor.getConfigurator().apply(config);
   }

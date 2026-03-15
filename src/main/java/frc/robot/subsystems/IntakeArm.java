@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -131,6 +132,7 @@ public class IntakeArm extends SubsystemBase {
     intakeArmTalonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     intakeArmTalonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
         Constants.IntakeArmConstants.SOFT_LIMIT_MIN;
+    intakeArmTalonFXConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Brake mode — holds arm in place when motor is stopped.
     // Prevents back-driving under gravity when neutral.
@@ -156,7 +158,7 @@ public class IntakeArm extends SubsystemBase {
    * <p>Position is the primary condition. Stall is the backup if encoder drifts.
    */
   public boolean isAtDeployedStop() {
-    boolean atPosition = getPositionRotations() <= Constants.IntakeArmConstants.DEPLOYED_POSITION;
+    boolean atPosition = getPositionRotations() >= Constants.IntakeArmConstants.DEPLOYED_POSITION;
     return atPosition || isStalled();
   }
 
@@ -166,7 +168,18 @@ public class IntakeArm extends SubsystemBase {
    * <p>Same logic as isAtDeployedStop() but in the retract direction.
    */
   public boolean isAtRetractedStop() {
-    boolean atPosition = getPositionRotations() >= Constants.IntakeArmConstants.RETRACTED_POSITION;
+    boolean atPosition = getPositionRotations() <= Constants.IntakeArmConstants.RETRACTED_POSITION;
+    return atPosition || isStalled();
+  }
+
+  /**
+   * Returns true when the arm has reached the shooter helper stop.
+   *
+   * <p>Same logic as isAtDeployedStop() but in the retract direction.
+   */
+  public boolean isAtShooterHelperStop() {
+    boolean atPosition =
+        getPositionRotations() <= Constants.IntakeArmConstants.SHOOTER_HELP_Position;
     return atPosition || isStalled();
   }
 

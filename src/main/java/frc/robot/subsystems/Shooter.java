@@ -64,8 +64,15 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter/TestRPS", 0.0);
 
     velocityChooser.setDefaultOption("Default(35)", 35.0);
+    velocityChooser.addOption("40", 40.0);
+    velocityChooser.addOption("45", 45.0);
+    velocityChooser.addOption("50", 50.0);
     velocityChooser.addOption("Tower(55)", 55.0);
+    velocityChooser.addOption("60", 60.0);
     velocityChooser.addOption("Trench(65)", 65.0);
+    velocityChooser.addOption("70", 70.0);
+    velocityChooser.addOption("80", 80.0);
+    velocityChooser.addOption("90", 90.0);
 
     SmartDashboard.putData("Shooter RPS Chooser", velocityChooser);
 
@@ -157,6 +164,10 @@ public class Shooter extends SubsystemBase {
 
   public double getLeftVelocityRPS() {
     return m_leftShooter.getVelocity().getValueAsDouble();
+  }
+
+  public double selectedVelocityChooser() {
+    return velocityChooser.getSelected();
   }
 
   public Command shootWithRPS(

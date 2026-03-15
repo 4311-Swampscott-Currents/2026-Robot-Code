@@ -23,6 +23,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.IntakeArm;
+import frc.robot.subsystems.IntakeArm.ArmState;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
@@ -57,7 +58,7 @@ public class RobotContainer {
 
   /* do you want a second controller? if so, call (+1) 248-434-5508 and uncomment this code!           */
 
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  // private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -137,14 +138,20 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
     NamedCommands.registerCommand("Spin Shooter", shooter.shootWithRPS(vision));
+    NamedCommands.registerCommand(
+        "Spin Shooter At 40 RPS", Commands.run(() -> shooter.setVelocity(40)));
     NamedCommands.registerCommand("Stop Shooting", Commands.runOnce(() -> shooter.stop(), shooter));
     NamedCommands.registerCommand(
         "Spin Kicker/Indexer When Shooting",
         Commands.waitUntil(shooter::atSetpoint)
+            .andThen(Commands.waitSeconds(1))
             .andThen(
                 Commands.parallel(
                         Commands.run(() -> kicker.kick(), kicker),
-                        Commands.run(() -> hopper.runForward(), hopper).withTimeout(5))
+                        Commands.sequence(
+                                Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.2),
+                                Commands.run(() -> hopper.runForward(), hopper).withTimeout(0.25))
+                            .repeatedly())
                     .finallyDo(
                         () -> {
                           kicker.stop();
@@ -163,6 +170,8 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
+    SmartDashboard.putNumber("DriveCommands/kv", 0);
+    SmartDashboard.putNumber("DriveCommands/ks", 0);
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -238,17 +247,17 @@ public class RobotContainer {
 
     // Shoot while holding right bumper by enabling the kicker and hopper, shooter needs to already
     // be running
-    driverController
-        .rightBumper()
-        .whileTrue(
-            Commands.parallel(
-                    Commands.run(() -> kicker.kick(), kicker),
-                    Commands.run(() -> hopper.runForward(), hopper))
-                .finallyDo(
-                    () -> {
-                      kicker.stop();
-                      hopper.stop();
-                    }));
+    // driverController
+    //     .rightBumper()
+    //     .whileTrue(
+    //         Commands.parallel(
+    //                 Commands.run(() -> kicker.kick(), kicker),
+    //                 Commands.run(() -> hopper.runForward(), hopper))
+    //             .finallyDo(
+    //                 () -> {
+    //                   kicker.stop();
+    //                   hopper.stop();
+    //                 }));
 
     // alternate sequence to enable kicker and hopper while holding right bumper, shooter needs to
     // already be running
@@ -268,20 +277,24 @@ public class RobotContainer {
     //                   hopper.stop();
     //                 }));
     // spins kicker forward while pulsating the hopper back and forth
-    // driverController
-    //     .rightBumper()
-    //     .whileTrue(
-    //         Commands.parallel(
-    //                 Commands.run(() -> kicker.kick(), kicker),
-    //                 Commands.sequence(
-    //                         Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.2),
-    //                         Commands.run(() -> hopper.runForward(), hopper).withTimeout(0.25))
-    //                     .repeatedly())
-    //             .finallyDo(
-    //                 () -> {
-    //                   kicker.stop();
-    //                   hopper.stop();
-    //                 }));
+    driverController
+        .rightBumper()
+        .whileTrue(
+            Commands.waitUntil(shooter::atSetpoint)
+                .andThen(
+                    Commands.parallel(
+                            Commands.run(() -> kicker.kick(), kicker),
+                            Commands.sequence(
+                                    Commands.run(() -> hopper.runReverse(), hopper)
+                                        .withTimeout(0.1),
+                                    Commands.run(() -> hopper.runForward(), hopper)
+                                        .withTimeout(0.25))
+                                .repeatedly())
+                        .finallyDo(
+                            () -> {
+                              kicker.stop();
+                              hopper.stop();
+                            })));
 
     // Un jam, run everything in reverse
     driverController
@@ -298,15 +311,14 @@ public class RobotContainer {
 
     // Move intake arm either deploy or retract when left trigger is pressed, depending on current
     // state
-    // driverController
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.either(
-    //             intakeArm.retractCommand(),
-    //             intakeArm.deployCommand(),
-    //             () ->
-    //                 (intakeArm.isDeployed() || intakeArm.getCurrentState() ==
-    // ArmState.DEPLOYING)));
+    driverController
+        .y()
+        .onTrue(
+            Commands.either(
+                intakeArm.retractCommand(),
+                intakeArm.deployCommand(),
+                () ->
+                    (intakeArm.isDeployed() || intakeArm.getCurrentState() == ArmState.DEPLOYING)));
 
     // driverController.leftTrigger().onTrue(intakeArm.toggleDeploy());
 
@@ -314,15 +326,18 @@ public class RobotContainer {
     // driverController.povUp().onTrue(intakeArm.retractCommand());
     // driverController.povDown().onTrue(intakeArm.deployCommand());
 
-    driverController.povUp().whileTrue(intakeArm.manualCommand(0.2));
-    driverController.povDown().whileTrue(intakeArm.manualCommand(-0.2));
+    driverController.povUp().whileTrue(intakeArm.manualCommand(-0.2));
+    driverController.povDown().whileTrue(intakeArm.manualCommand(0.2));
+    driverController
+        .povRight()
+        .whileTrue(Commands.run(() -> intakeRoller.eject()).finallyDo(() -> intakeRoller.stop()));
 
     //  runs the kicker
-    driverController
-        .start()
-        .whileTrue(
-            Commands.run(() -> kicker.runPercent(0.5), kicker)
-                .finallyDo(() -> kicker.stop())); // change this value if you want
+    // driverController
+    //     .start()
+    //     .whileTrue(
+    //         Commands.run(() -> kicker.runPercent(0.5), kicker)
+    //             .finallyDo(() -> kicker.stop())); // change this value if you want
 
     // runs hopper
     // driverController
@@ -340,22 +355,51 @@ public class RobotContainer {
     driverController
         .rightTrigger()
         .whileTrue(
-            Commands.run(
-                    () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0.0)),
-                    shooter)
+            Commands.run(() -> shooter.setVelocity(shooter.selectedVelocityChooser()), shooter)
                 .finallyDo(() -> shooter.stop()));
 
     // operator bindings
-    // operatorController.leftTrigger();
+    // Move intake arm either deploy or retract when left trigger is pressed, depending on current
+    // state
+    // operatorController
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.either(
+    //             intakeArm.retractCommand(),
+    //             intakeArm.deployCommand(),
+    //             () ->
+    //                 (intakeArm.isDeployed() || intakeArm.getCurrentState() ==
+    // ArmState.DEPLOYING)));
     // operatorController.leftBumper();
-    // operatorController.rightTrigger();
-    // operatorController.rightBumper();
+    // runs shooter
+    // operatorController
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         Commands.run(
+    //                 () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0.0)),
+    //                 shooter)
+    //             .finallyDo(() -> shooter.stop()));
+    // spins kicker forward while pulsating the hopper back and forth
+    // operatorController
+    //     .rightBumper()
+    //     .whileTrue(
+    //         Commands.parallel(
+    //                 Commands.run(() -> kicker.kick(), kicker),
+    //                 Commands.sequence(
+    //                         Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.2),
+    //                         Commands.run(() -> hopper.runForward(), hopper).withTimeout(0.25))
+    //                     .repeatedly())
+    //             .finallyDo(
+    //                 () -> {
+    //                   kicker.stop();
+    //                   hopper.stop();
+    //                 }));
     // operatorController.a();
     // operatorController.b();
     // operatorController.x();
     // operatorController.y();
-    // operatorController.povUp();
-    // operatorController.povDown();
+    // operatorController.povUp().whileTrue(intakeArm.manualCommand(-0.2));
+    // operatorController.povDown().whileTrue(intakeArm.manualCommand(0.2));
 
     // runs everything backwards
     // operatorController
