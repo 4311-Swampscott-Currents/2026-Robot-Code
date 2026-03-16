@@ -139,7 +139,7 @@ public class RobotContainer {
         "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
     NamedCommands.registerCommand("Spin Shooter", shooter.shootWithRPS(vision));
     NamedCommands.registerCommand(
-        "Spin Shooter At 40 RPS", Commands.run(() -> shooter.setVelocity(40)));
+        "Spin Shooter At 50 RPS", Commands.run(() -> shooter.setVelocity(50)));
     NamedCommands.registerCommand("Stop Shooting", Commands.runOnce(() -> shooter.stop(), shooter));
     NamedCommands.registerCommand(
         "Spin Kicker/Indexer When Shooting",
@@ -149,7 +149,24 @@ public class RobotContainer {
                 Commands.parallel(
                         Commands.run(() -> kicker.kick(), kicker),
                         Commands.sequence(
-                                Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.2),
+                                Commands.run(() -> hopper.runForward(), hopper).withTimeout(0.25),
+                                Commands.run(() -> hopper.stop(), hopper).withTimeout(0.2))
+                            .repeatedly())
+                    .finallyDo(
+                        () -> {
+                          kicker.stop();
+                          hopper.stop();
+                        })));
+
+    NamedCommands.registerCommand(
+        "Spin Kicker/Indexer When Shooting Back/Forward",
+        Commands.waitUntil(shooter::atSetpoint)
+            .andThen(Commands.waitSeconds(1))
+            .andThen(
+                Commands.parallel(
+                        Commands.run(() -> kicker.kick(), kicker),
+                        Commands.sequence(
+                                Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.1),
                                 Commands.run(() -> hopper.runForward(), hopper).withTimeout(0.25))
                             .repeatedly())
                     .finallyDo(

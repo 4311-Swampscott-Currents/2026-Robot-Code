@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Spin Shooter At 40 RPS"
+                  "name": "Spin Shooter At 50 RPS"
                 }
               },
               {
@@ -48,15 +48,52 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Deploy Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "PostCenter"
+            "pathName": "Collect Depot Middle"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter At 50 RPS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Kicker/Indexer When Shooting Back/Forward"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Deploy Intake"
+            "name": "Stop Kicker and Indexer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Shooting"
           }
         }
       ]

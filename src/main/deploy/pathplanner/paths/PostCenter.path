@@ -4,23 +4,23 @@
     {
       "anchor": {
         "x": 2.935,
-        "y": 3.9
+        "y": 4.035
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.379963855421687,
-        "y": 3.7727349397590366
+        "y": 3.907734939759037
       },
       "isLocked": false,
       "linkedName": "CenterFinalPose"
     },
     {
       "anchor": {
-        "x": 1.6040963855421686,
+        "x": 2.0,
         "y": 3.586963855421687
       },
       "prevControl": {
-        "x": 2.0412048192771084,
+        "x": 2.43710843373494,
         "y": 3.6853132530120476
       },
       "nextControl": null,
