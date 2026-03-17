@@ -137,7 +137,7 @@ public class RobotContainer {
             .finallyDo(() -> intakeRoller.stop()));
     NamedCommands.registerCommand(
         "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
-    NamedCommands.registerCommand("Spin Shooter", shooter.shootWithRPS(vision));
+    NamedCommands.registerCommand("Spin Shooter", shooter.shootIntelligently(vision));
     NamedCommands.registerCommand(
         "Spin Shooter At 50 RPS", Commands.run(() -> shooter.setVelocity(50)));
     NamedCommands.registerCommand("Stop Shooting", Commands.runOnce(() -> shooter.stop(), shooter));
@@ -231,12 +231,12 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             AutoAimCommands.autoAimPoseBased(
-                drive,
-                vision,
-                shooter,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX())
-            /* .alongWith(shooter.shootWithRPS(vision))*/ );
+                    drive,
+                    vision,
+                    shooter,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX())
+                .alongWith(shooter.shootIntelligentlyWithDelay(vision, 0.25)));
 
     // Lock to 0° when A button is held
     driverController

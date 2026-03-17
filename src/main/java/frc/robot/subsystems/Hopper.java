@@ -64,6 +64,8 @@ public class Hopper extends SubsystemBase {
   /**
    * Placeholder for beam-break sensor. Replace with: private final DigitalInput sensor = new
    * DigitalInput(port); return !sensor.get();
+   *
+   * <p>... and this is why you don't use claude to code because we don't have a beam break sensor
    */
   public boolean hasBall() {
     return false;

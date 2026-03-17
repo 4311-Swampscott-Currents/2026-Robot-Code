@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.AutoAimCommands;
 import frc.robot.generated.TunerConstants;
@@ -169,15 +170,16 @@ public class Shooter extends SubsystemBase {
   public double selectedVelocityChooser() {
     return velocityChooser.getSelected();
   }
-
-  public Command shootWithRPS(
-      Vision vision) { // shoots using the distance data from vision and the interpolation data from
-    // the RPM table
+  /** Shoots using the RPS data table info. */
+  public Command shootIntelligently(Vision vision) {
     double rps = AutoAimCommands.interpolateRPS(vision.getDistanceMeters());
     targetRPS = rps;
     return Commands.run(() -> setVelocity(rps));
   }
-
+  /** Shoots using the RPS data table info after a specified delay. */
+  public Command shootIntelligentlyWithDelay(Vision vision, double delay) {
+    return Commands.sequence(new WaitCommand(delay), shootIntelligently(vision));
+  }
   // -----------------------------------------------------------------------
   // Periodic
   // -----------------------------------------------------------------------
