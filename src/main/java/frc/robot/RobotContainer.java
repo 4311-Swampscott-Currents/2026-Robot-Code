@@ -303,7 +303,7 @@ public class RobotContainer {
                             Commands.run(() -> kicker.kick(), kicker),
                             Commands.sequence(
                                     Commands.run(() -> hopper.runReverse(), hopper)
-                                        .withTimeout(0.1),
+                                        .withTimeout(0.05),
                                     Commands.run(() -> hopper.runForward(), hopper)
                                         .withTimeout(0.25))
                                 .repeatedly())
