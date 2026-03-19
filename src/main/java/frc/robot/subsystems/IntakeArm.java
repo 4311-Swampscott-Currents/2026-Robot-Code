@@ -342,6 +342,10 @@ public class IntakeArm extends SubsystemBase {
     return currentState == ArmState.RETRACTED;
   }
 
+  public TalonFX getPivotMotor() {
+    return pivotMotor;
+  }
+
   // -----------------------------------------------------------------------
   // Periodic
   // -----------------------------------------------------------------------

@@ -71,6 +71,10 @@ public class Hopper extends SubsystemBase {
     return false;
   }
 
+  public TalonFX getIndexer() {
+    return conveyorMotor;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber(

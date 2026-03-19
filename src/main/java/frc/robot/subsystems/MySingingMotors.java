@@ -1,19 +1,32 @@
 package frc.robot.subsystems;
+
 import com.ctre.phoenix6.Orchestra;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
+import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class MySingingMotors {
-// 1. Create the orchestra
-    //Orchestra orchestra = new Orchestra();
+public class MySingingMotors extends SubsystemBase {
+  // 1. Create the orchestra
+  Orchestra orchestra = new Orchestra();
 
-// 2. Add your motors as instruments
-    //orchestra.addInstrument(m_leftShooter);
-    //orchestra.addInstrument(m_rightShooter);
+  public MySingingMotors(TalonFX... instruments) {
+    // 2. Add your motors as instruments
+    for (TalonFX motor : instruments) {
+      orchestra.addInstrument(motor);
+    }
+    // 3. Load the music file from the deploy directory
+    orchestra.loadMusic("megalovania.chrp");
+  }
 
-// 3. Load the music file from the deploy directory
-    //orchestra.loadMusic("my_song.chrp");
+  public void sing() {
+    if (DriverStation.isDisabled()) {
+      orchestra.play();
+    }
+  }
 
-// 4. Play (usually triggered in teleopInit or via a button)
-    //orchestra.play();
+  public void stop() {
+    {
+      orchestra.stop();
+    }
+  }
 }

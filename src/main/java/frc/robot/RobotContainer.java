@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.IntakeArm;
 import frc.robot.subsystems.IntakeArm.ArmState;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Kicker;
+import frc.robot.subsystems.MySingingMotors;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
@@ -51,6 +53,7 @@ public class RobotContainer {
   private final Hopper hopper;
   private final Kicker kicker;
   private final Vision vision;
+  private final MySingingMotors orchestra;
   // private static Pose2d robotPose;
 
   // Controller
@@ -127,6 +130,15 @@ public class RobotContainer {
     hopper = new Hopper();
     kicker = new Kicker();
     vision = new Vision(drive);
+    orchestra =
+        new MySingingMotors(
+            hopper.getIndexer(),
+            shooter.getRightShooter(),
+            shooter.getLeftShooter(),
+            intakeArm.getPivotMotor(),
+            intakeRoller.getIntakeRoller(),
+            kicker.getLeftKicker(),
+            kicker.getRightKicker());
 
     // pathplanner commands
     NamedCommands.registerCommand("Deploy Intake", intakeArm.deployCommand());
@@ -231,12 +243,11 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             AutoAimCommands.autoAimPoseBased(
-                    drive,
-                    vision,
-                    shooter,
-                    () -> -driverController.getLeftY(),
-                    () -> -driverController.getLeftX())
-                .alongWith(shooter.shootIntelligentlyWithDelay(vision, 0.25)));
+                drive,
+                vision,
+                shooter,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX()));
 
     // Lock to 0° when A button is held
     driverController
@@ -361,6 +372,7 @@ public class RobotContainer {
     //     .povRight()
     //     .whileTrue(
     //         Commands.run(() -> hopper.runPercent(0.5), hopper).finallyDo(() -> hopper.stop()));
+
     // runs intakeroller
     driverController
         .leftTrigger()
@@ -375,66 +387,13 @@ public class RobotContainer {
             Commands.run(() -> shooter.setVelocity(shooter.selectedVelocityChooser()), shooter)
                 .finallyDo(() -> shooter.stop()));
 
-    // operator bindings
-    // Move intake arm either deploy or retract when left trigger is pressed, depending on current
-    // state
-    // operatorController
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.either(
-    //             intakeArm.retractCommand(),
-    //             intakeArm.deployCommand(),
-    //             () ->
-    //                 (intakeArm.isDeployed() || intakeArm.getCurrentState() ==
-    // ArmState.DEPLOYING)));
-    // operatorController.leftBumper();
-    // runs shooter
-    // operatorController
-    //     .rightTrigger()
-    //     .whileTrue(
-    //         Commands.run(
-    //                 () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0.0)),
-    //                 shooter)
-    //             .finallyDo(() -> shooter.stop()));
-    // spins kicker forward while pulsating the hopper back and forth
-    // operatorController
-    //     .rightBumper()
-    //     .whileTrue(
-    //         Commands.parallel(
-    //                 Commands.run(() -> kicker.kick(), kicker),
-    //                 Commands.sequence(
-    //                         Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.2),
-    //                         Commands.run(() -> hopper.runForward(), hopper).withTimeout(0.25))
-    //                     .repeatedly())
-    //             .finallyDo(
-    //                 () -> {
-    //                   kicker.stop();
-    //                   hopper.stop();
-    //                 }));
-    // operatorController.a();
-    // operatorController.b();
-    // operatorController.x();
-    // operatorController.y();
-    // operatorController.povUp().whileTrue(intakeArm.manualCommand(-0.2));
-    // operatorController.povDown().whileTrue(intakeArm.manualCommand(0.2));
-
-    // runs everything backwards
-    // operatorController
-    //     .povLeft()
-    //     .whileTrue(
-    //         Commands.parallel(
-    //                 Commands.run(() -> kicker.runPercent(-1), kicker),
-    //                 Commands.run(() -> hopper.runReverse(), hopper),
-    //                 Commands.run(() -> intakeRoller.eject(), intakeRoller))
-    //             .finallyDo(
-    //                 () -> {
-    //                   kicker.stop();
-    //                   hopper.stop();
-    //                   intakeRoller.stop();
-    //                 }));
-
-    // operatorController.povRight();
-
+    // plays music
+    driverController
+        .start()
+        .onTrue(
+            Commands.run(() -> orchestra.sing())
+                .onlyWhile(() -> DriverStation.isDisabled())
+                .finallyDo(() -> orchestra.stop()));
   }
 
   public Pose2d updatePose() {

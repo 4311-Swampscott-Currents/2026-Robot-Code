@@ -67,6 +67,14 @@ public class Kicker extends SubsystemBase {
     kickerRightMotor.setControl(followRequest);
   }
 
+  public TalonFX getRightKicker() {
+    return kickerRightMotor;
+  }
+
+  public TalonFX getLeftKicker() {
+    return kickerLeftMotor;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber(

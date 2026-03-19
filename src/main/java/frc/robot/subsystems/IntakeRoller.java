@@ -60,6 +60,10 @@ public class IntakeRoller extends SubsystemBase {
     rollerMotor.setControl(neutralRequest);
   }
 
+  public TalonFX getIntakeRoller() {
+    return rollerMotor;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber(

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.05764245300154,
-        "y": 4.7637751483100965
+        "x": 2.7469985013020937,
+        "y": 4.199789066649887
       },
       "isLocked": false,
       "linkedName": "CenterFinalPose"
@@ -20,12 +20,12 @@
         "y": 5.956390870185448
       },
       "prevControl": {
-        "x": 2.5401922069813727,
-        "y": 5.938474446077455
+        "x": 2.425891583452211,
+        "y": 5.956390870185448
       },
       "nextControl": {
-        "x": 1.3866333808844504,
-        "y": 5.9952068473609135
+        "x": 1.9258915834522143,
+        "y": 5.956390870185448
       },
       "isLocked": false,
       "linkedName": null
@@ -36,12 +36,12 @@
         "y": 5.956390870185448
       },
       "prevControl": {
-        "x": 0.5492939928769675,
-        "y": 6.1183951586439616
+        "x": 0.9897004279600574,
+        "y": 5.956390870185448
       },
       "nextControl": {
-        "x": 1.1446302769344954,
-        "y": 5.61186274522953
+        "x": 0.48970042796005686,
+        "y": 5.956390870185448
       },
       "isLocked": false,
       "linkedName": null
@@ -52,8 +52,8 @@
         "y": 4.035
       },
       "prevControl": {
-        "x": 3.1862729597684862,
-        "y": 4.101655730344638
+        "x": 3.1819020805647575,
+        "y": 4.074234711835237
       },
       "nextControl": null,
       "isLocked": false,
@@ -73,8 +73,8 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.5151924375421926,
-      "maxWaypointRelativePos": 2.2687373396353934,
+      "minWaypointRelativePos": 1.4977667493796443,
+      "maxWaypointRelativePos": 2.2957816377171207,
       "constraints": {
         "maxVelocity": 0.5,
         "maxAcceleration": 1.0,
@@ -93,7 +93,7 @@
       },
       "rotationOffset": 0.0,
       "minWaypointRelativePos": 0.0,
-      "maxWaypointRelativePos": 0.05,
+      "maxWaypointRelativePos": 0.4972704714640491,
       "name": "Point Towards Zone"
     },
     {
@@ -110,8 +110,8 @@
   "eventMarkers": [
     {
       "name": "Intake Balls",
-      "waypointRelativePos": 0.6,
-      "endWaypointRelativePos": 2.2362282878411737,
+      "waypointRelativePos": 1.360794044665004,
+      "endWaypointRelativePos": 2.2779156327543237,
       "command": null
     }
   ],
