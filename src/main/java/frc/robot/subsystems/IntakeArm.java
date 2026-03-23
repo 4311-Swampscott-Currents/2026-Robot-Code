@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * IntakeArmSubsystem
@@ -351,6 +352,7 @@ public class IntakeArm extends SubsystemBase {
   // -----------------------------------------------------------------------
   @Override
   public void periodic() {
+    // Update SmartDashboard with arm status
     SmartDashboard.putBoolean("Arm/IsDeployed", isDeployed());
     SmartDashboard.putBoolean("Arm/IsRetracted", isRetracted());
     SmartDashboard.putBoolean("Arm/Stalled", isStalled());
@@ -358,6 +360,16 @@ public class IntakeArm extends SubsystemBase {
     SmartDashboard.putNumber("Arm/PositionRot", getPositionRotations());
     SmartDashboard.putNumber("Arm/VelocityRPS", getVelocityRPS());
     SmartDashboard.putNumber("Arm/StatorAmps", getStatorAmps());
+
+    // Log the same data to the data logger for offline analysis
+    Logger.recordOutput("Arm/IsDeployed", isDeployed());
+    Logger.recordOutput("Arm/IsRetracted", isRetracted());
+    Logger.recordOutput("Arm/Stalled", isStalled());
+    Logger.recordOutput("Arm/State", currentState.name());
+    Logger.recordOutput("Arm/PositionRot", getPositionRotations());
+    Logger.recordOutput("Arm/VelocityRPS", getVelocityRPS());
+    Logger.recordOutput("Arm/StatorAmps", getStatorAmps());
+
     // SmartDashboard.putNumber("Arm/ThroughBoreRaw", throughBoreEncoder.get());
     // SmartDashboard.putNumber("Arm/ThroughBoreAdjusted", getAbsolutePositionRotations());
     // SmartDashboard.putBoolean("Arm/EncoderConnected", isEncoderConnected());

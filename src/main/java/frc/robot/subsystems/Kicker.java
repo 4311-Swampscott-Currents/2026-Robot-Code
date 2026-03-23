@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * KickerSubsystem
@@ -77,6 +78,7 @@ public class Kicker extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Update SmartDashboard with kicker status
     SmartDashboard.putNumber(
         "Kicker/LeftOutputPercent", kickerLeftMotor.getDutyCycle().getValueAsDouble());
     SmartDashboard.putNumber(
@@ -84,6 +86,16 @@ public class Kicker extends SubsystemBase {
     SmartDashboard.putNumber(
         "Kicker/RightOutputPercent", kickerRightMotor.getDutyCycle().getValueAsDouble());
     SmartDashboard.putNumber(
+        "Kicker/RightStatorAmps", kickerRightMotor.getStatorCurrent().getValueAsDouble());
+
+    // Log the same data to the data logger for offline analysis
+    Logger.recordOutput(
+        "Kicker/LeftOutputPercent", kickerLeftMotor.getDutyCycle().getValueAsDouble());
+    Logger.recordOutput(
+        "Kicker/LeftStatorAmps", kickerLeftMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Kicker/RightOutputPercent", kickerRightMotor.getDutyCycle().getValueAsDouble());
+    Logger.recordOutput(
         "Kicker/RightStatorAmps", kickerRightMotor.getStatorCurrent().getValueAsDouble());
   }
 }

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * IntakeRollerSubsystem
@@ -66,9 +67,16 @@ public class IntakeRoller extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Update SmartDashboard with roller status
     SmartDashboard.putNumber(
         "IntakeRoller/OutputPercent", rollerMotor.getDutyCycle().getValueAsDouble());
     SmartDashboard.putNumber(
+        "IntakeRoller/StatorAmps", rollerMotor.getStatorCurrent().getValueAsDouble());
+
+    // Log the same data to the data logger for offline analysis
+    Logger.recordOutput(
+        "IntakeRoller/OutputPercent", rollerMotor.getDutyCycle().getValueAsDouble());
+    Logger.recordOutput(
         "IntakeRoller/StatorAmps", rollerMotor.getStatorCurrent().getValueAsDouble());
   }
 }

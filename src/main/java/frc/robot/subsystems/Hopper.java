@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * HopperSubsystem
@@ -77,10 +78,15 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Update SmartDashboard with hopper status
     SmartDashboard.putNumber(
         "Hopper/OutputPercent", conveyorMotor.getDutyCycle().getValueAsDouble());
     SmartDashboard.putNumber(
         "Hopper/StatorAmps", conveyorMotor.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putBoolean("Hopper/HasBall", hasBall());
+    // SmartDashboard.putBoolean("Hopper/HasBall", hasBall());
+
+    // Log the same data to the data logger for offline analysis
+    Logger.recordOutput("Hopper/OutputPercent", conveyorMotor.getDutyCycle().getValueAsDouble());
+    Logger.recordOutput("Hopper/StatorAmps", conveyorMotor.getStatorCurrent().getValueAsDouble());
   }
 }

@@ -7,7 +7,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.AutoAimCommands;
 import frc.robot.generated.TunerConstants;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * ShooterSubsystem
@@ -55,7 +56,8 @@ public class Shooter extends SubsystemBase {
 
   private double targetRPS = 0.0;
 
-  private final SendableChooser<Double> velocityChooser = new SendableChooser<>();
+  private final LoggedDashboardChooser<Double> velocityChooser =
+      new LoggedDashboardChooser<>("Shooter RPS");
 
   // -----------------------------------------------------------------------
   // Constructor
@@ -63,7 +65,7 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     SmartDashboard.putNumber("Shooter/TestRPS", 0.0);
 
-    velocityChooser.setDefaultOption("Default(35)", 35.0);
+    velocityChooser.addDefaultOption("Default(35)", 35.0);
     velocityChooser.addOption("40", 40.0);
     velocityChooser.addOption("45", 45.0);
     velocityChooser.addOption("50", 50.0);
@@ -73,8 +75,6 @@ public class Shooter extends SubsystemBase {
     velocityChooser.addOption("70", 70.0);
     velocityChooser.addOption("80", 80.0);
     velocityChooser.addOption("90", 90.0);
-
-    SmartDashboard.putData("Shooter RPS Chooser", velocityChooser);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -167,7 +167,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double selectedVelocityChooser() {
-    return velocityChooser.getSelected();
+    return velocityChooser.get();
   }
   /** Shoots using the RPS data table info. */
   public Command shootIntelligently(Vision vision) {
@@ -191,6 +191,7 @@ public class Shooter extends SubsystemBase {
   // -----------------------------------------------------------------------
   @Override
   public void periodic() {
+    // Update SmartDashboard with shooter status
     SmartDashboard.putNumber("Shooter/TargetRPS", targetRPS);
     SmartDashboard.putNumber("Shooter/RightRPS", getRightVelocityRPS());
     SmartDashboard.putNumber("Shooter/LeftRPS", getLeftVelocityRPS());
@@ -200,5 +201,16 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber(
         "Shooter/BottomStatorAmps", m_leftShooter.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/TestVoltage", 0.0);
+
+    // Log the same data to the data logger for offline analysis
+    Logger.recordOutput("Shooter/TargetRPS", targetRPS);
+    Logger.recordOutput("Shooter/RightRPS", getRightVelocityRPS());
+    Logger.recordOutput("Shooter/LeftRPS", getLeftVelocityRPS());
+    Logger.recordOutput("Shooter/AtSetpoint", atSetpoint());
+    Logger.recordOutput(
+        "Shooter/TopStatorAmps", m_rightShooter.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Shooter/BottomStatorAmps", m_leftShooter.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Shooter/TestVoltage", 0.0);
   }
 }

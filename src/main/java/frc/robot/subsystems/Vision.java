@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * VisionSubsystem
@@ -300,6 +301,7 @@ public class Vision extends SubsystemBase {
             ? Math.toDegrees(Math.atan(Constants.VisionConstants.HUB_HALF_DEPTH_METERS / distance))
             : 0.0; // if else statement
 
+    // Update SmartDashboard with vision status
     SmartDashboard.putBoolean("Vision/HasTarget", hasTarget());
     SmartDashboard.putNumber("Vision/TX", getTX());
     SmartDashboard.putNumber("Vision/TY", getTY());
@@ -311,5 +313,17 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber(
         "Vision/TXHubOffsetDeg", txOffsetDegrees); // how much TX is being corrected
     SmartDashboard.putBoolean("Vision/InsideAllianceZone", inAllianceZone());
+
+    // Log the same data to the data logger for offline analysis
+    Logger.recordOutput("Vision/HasTarget", hasTarget());
+    Logger.recordOutput("Vision/TX", getTX());
+    Logger.recordOutput("Vision/TY", getTY());
+    Logger.recordOutput("Vision/DistanceMeters", getDistanceMeters());
+    Logger.recordOutput("Vision/TrackedTagID", getTrackedTagID());
+    Logger.recordOutput("Vision/ExpectedTagID", getTargetTagID());
+    Logger.recordOutput("Vision/AngleToTargetDeg", getAngleToTarget().getDegrees());
+    Logger.recordOutput("Vision/AngleTXDeg", getAngleToTargetTX().getDegrees());
+    Logger.recordOutput("Vision/TXHubOffsetDeg", txOffsetDegrees);
+    Logger.recordOutput("Vision/InsideAllianceZone", inAllianceZone());
   }
 }
