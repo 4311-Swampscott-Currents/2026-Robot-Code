@@ -254,7 +254,7 @@ public final class Constants {
       SHOT_MAP.put(2.0, 45.0);
       // SHOT_MAP.put(2.5, 25.0);
       SHOT_MAP.put(2.6, 51.0);
-
+      SHOT_MAP.put(3.0, 53.0);
       // SHOT_MAP.put(3.0, 25.0);
       SHOT_MAP.put(3.5, 55.0);
       // SHOT_MAP.put(4.0, 25.0);

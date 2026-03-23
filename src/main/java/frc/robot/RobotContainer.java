@@ -11,8 +11,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,6 +55,7 @@ public class RobotContainer {
   private final Kicker kicker;
   private final Vision vision;
   private final MySingingMotors orchestra;
+  private final PowerDistribution m_pdh;
   // private static Pose2d robotPose;
 
   // Controller
@@ -139,6 +141,7 @@ public class RobotContainer {
             intakeRoller.getIntakeRoller(),
             kicker.getLeftKicker(),
             kicker.getRightKicker());
+    m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
     // pathplanner commands
     NamedCommands.registerCommand("Deploy Intake", intakeArm.deployCommand());
@@ -384,16 +387,34 @@ public class RobotContainer {
     driverController
         .rightTrigger()
         .whileTrue(
-            Commands.run(() -> shooter.setVelocity(shooter.selectedVelocityChooser()), shooter)
+            Commands.run(
+                    () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0)),
+                    shooter)
                 .finallyDo(() -> shooter.stop()));
 
     // plays music
+    //     driverController
+    //         .start()
+    //         .onTrue(
+    //             Commands.run(() -> orchestra.setupMusic("megalovania","pirate","evangelion"))
+    //                 .beforeStarting(() -> orchestra.sing())
+    //                 .onlyWhile(() -> DriverStation.isDisabled())
+    //                 .finallyDo(() -> orchestra.stop())
+    //                 );
     driverController
         .start()
         .onTrue(
-            Commands.run(() -> orchestra.sing())
-                .onlyWhile(() -> DriverStation.isDisabled())
-                .finallyDo(() -> orchestra.stop()));
+            Commands.runOnce(
+                () -> {
+                  orchestra.sing();
+                  m_pdh.setSwitchableChannel(true);
+                }))
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  orchestra.stop();
+                  m_pdh.setSwitchableChannel(false);
+                }));
   }
 
   public Pose2d updatePose() {
