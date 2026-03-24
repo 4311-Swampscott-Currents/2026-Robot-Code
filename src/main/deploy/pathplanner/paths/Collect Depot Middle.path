@@ -24,7 +24,7 @@
         "y": 5.956390870185448
       },
       "nextControl": {
-        "x": 1.9258915834522143,
+        "x": 1.925891583452211,
         "y": 5.956390870185448
       },
       "isLocked": false,
@@ -40,7 +40,7 @@
         "y": 5.956390870185448
       },
       "nextControl": {
-        "x": 0.48970042796005686,
+        "x": 0.48970042796005675,
         "y": 5.956390870185448
       },
       "isLocked": false,
@@ -111,8 +111,13 @@
     {
       "name": "Intake Balls",
       "waypointRelativePos": 1.360794044665004,
-      "endWaypointRelativePos": 2.2779156327543237,
-      "command": null
+      "endWaypointRelativePos": 2.420843672456569,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake Balls"
+        }
+      }
     }
   ],
   "globalConstraints": {
