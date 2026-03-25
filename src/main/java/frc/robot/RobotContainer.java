@@ -317,11 +317,13 @@ public class RobotContainer {
                     Commands.parallel(
                             Commands.run(() -> kicker.kick(), kicker),
                             Commands.sequence(
-                                    Commands.run(() -> hopper.runReverse(), hopper)
-                                        .withTimeout(0.05),
-                                    Commands.run(() -> hopper.runForward(), hopper)
-                                        .withTimeout(0.25))
-                                .repeatedly())
+                                Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.35),
+                                Commands.sequence(
+                                        Commands.run(() -> hopper.runReverse(), hopper)
+                                            .withTimeout(0.05),
+                                        Commands.run(() -> hopper.runForward(), hopper)
+                                            .withTimeout(0.25))
+                                    .repeatedly()))
                         .finallyDo(
                             () -> {
                               kicker.stop();
