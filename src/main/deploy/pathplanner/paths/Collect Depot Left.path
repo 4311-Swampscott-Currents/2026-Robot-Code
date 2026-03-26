@@ -36,8 +36,8 @@
         "y": 6.0
       },
       "prevControl": {
-        "x": 0.5471739666409802,
-        "y": 6.126746309944591
+        "x": 0.5471739666409786,
+        "y": 6.126746309944592
       },
       "nextControl": {
         "x": 1.855433734939759,
@@ -78,8 +78,8 @@
         "y": 4.035
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.049627791563277165,
-      "maxWaypointRelativePos": 0.10124069478908977,
+      "minWaypointRelativePos": 0.10072992700729926,
+      "maxWaypointRelativePos": 0.19708029197080296,
       "name": "Point Towards Zone"
     },
     {
@@ -104,7 +104,12 @@
       "name": "Intake Balls",
       "waypointRelativePos": 1.2119106699751565,
       "endWaypointRelativePos": 2.2362282878411737,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Deploy Intake"
+        }
+      }
     }
   ],
   "globalConstraints": {

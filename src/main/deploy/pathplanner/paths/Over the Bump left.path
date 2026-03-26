@@ -96,16 +96,16 @@
     },
     {
       "anchor": {
-        "x": 2.6968674698795176,
+        "x": 2.697,
         "y": 5.587
       },
       "prevControl": {
-        "x": 2.929511226073911,
+        "x": 2.9296437561943933,
         "y": 5.495474688179915
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Bump Final"
     }
   ],
   "rotationTargets": [
@@ -144,19 +144,23 @@
       "name": "Deploy Intake",
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "Stop Intaking",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Deploy Intake"
+        }
+      }
     },
     {
       "name": "Intake Balls",
       "waypointRelativePos": 1.830396475770925,
-      "endWaypointRelativePos": 5.114537444933921,
-      "command": null
+      "endWaypointRelativePos": 5.255474452554749,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake Balls"
+        }
+      }
     }
   ],
   "globalConstraints": {

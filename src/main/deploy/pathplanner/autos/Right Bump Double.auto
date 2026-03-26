@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Collect Depot Left"
+            "pathName": "Over the Bump right"
           }
         },
         {
@@ -23,13 +23,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Spin Kicker/Indexer When Shooting"
+                  "name": "Spin Kicker/Indexer When Shooting Back/Forward"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.0
+                  "waitTime": 5.0
                 }
               }
             ]
@@ -48,9 +48,46 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Second over the bump right"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Kicker/Indexer When Shooting Back/Forward"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "Deploy Intake"
+            "name": "Stop Kicker and Indexer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Shooting"
           }
         }
       ]

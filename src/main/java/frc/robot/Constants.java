@@ -109,14 +109,14 @@ public final class Constants {
     // Stop positions in arm shaft rotations
     // With 125:1 the arm moves very slowly — full range might be
     // only 0.1-0.2 arm shaft rotations for a typical intake pivot
-    public static final double DEPLOYED_POSITION = 0.22; // TUNE!
+    public static final double DEPLOYED_POSITION = 0.20; // TUNE!
     public static final double RETRACTED_POSITION = 0.00; // TUNE!
-    public static final double SHOOTER_HELP_Position = 0.11;
+    public static final double SHOOTER_HELP_Position = 0.05;
 
     // Soft limits — TalonFX hardware safety net, operates independently of
     // command logic. If stall detection fails entirely, the motor cuts out
     // before the arm damages itself or the gearbox.
-    public static final double SOFT_LIMIT_MAX = 0.26; // TUNE!
+    public static final double SOFT_LIMIT_MAX = 0.22; // TUNE!
     public static final double SOFT_LIMIT_MIN = -0.05;
 
     // Duty cycle for movement
