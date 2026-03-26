@@ -172,11 +172,12 @@ public class Shooter extends SubsystemBase {
   /** Shoots using the RPS data table info. */
   public Command shootIntelligently(Vision vision) {
     return Commands.run(
-        () -> {
-          double rps = AutoAimCommands.interpolateRPS(vision.getDistanceMeters());
-          targetRPS = rps;
-          setVelocity(rps);
-        });
+            () -> {
+              double rps = AutoAimCommands.interpolateRPS(vision.getDistanceMeters());
+              targetRPS = rps; // unused?
+              setVelocity(rps);
+            })
+        .finallyDo(() -> this.stop());
   }
 
   public TalonFX getRightShooter() {

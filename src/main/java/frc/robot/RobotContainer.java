@@ -155,7 +155,8 @@ public class RobotContainer {
         "Stop Intaking", Commands.runOnce(() -> intakeRoller.stop(), intakeRoller));
     NamedCommands.registerCommand("Spin Shooter", shooter.shootIntelligently(vision));
     NamedCommands.registerCommand(
-        "Spin Shooter At 50 RPS", Commands.run(() -> shooter.setVelocity(50)));
+        "Spin Shooter At 50 RPS",
+        Commands.run(() -> shooter.setVelocity(50)).finallyDo(() -> shooter.stop()));
     NamedCommands.registerCommand("Stop Shooting", Commands.runOnce(() -> shooter.stop(), shooter));
     NamedCommands.registerCommand(
         "Spin Kicker/Indexer When Shooting",

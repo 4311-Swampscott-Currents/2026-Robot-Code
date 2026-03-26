@@ -72,6 +72,17 @@ public final class Constants {
     public static final int M_KICKER_RIGHT_ID = 20;
     public static final double KICK_PERCENT = 1.0;
 
+    // Velocity PID (Phoenix 6 Slot 0) — units: rot/sec
+    // kV is the most critical gain. Characterize first via SysId or manual sweep.
+    public static final double kP = 0.80;
+    public static final double kI = 0.00;
+    public static final double kD = 0.00;
+    public static final double kS = 0.2; // static friction (volts)
+    public static final double kV = 0.12643; // volts per rot/sec — TUNE THIS
+
+    // "At speed" tolerance (~50 RPM expressed in rot/sec)
+    public static final double TOLERANCE_RPS = 120.0 / 60.0;
+
     // Current limits
     // Kicker runs in short bursts — 40A stator is plenty, 30A supply
     // keeps draw reasonable alongside the shooter motors

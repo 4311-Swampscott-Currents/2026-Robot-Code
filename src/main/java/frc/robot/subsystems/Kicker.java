@@ -4,6 +4,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -31,7 +33,11 @@ public class Kicker extends SubsystemBase {
   private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
   private final Follower followRequest =
       new Follower(Constants.KickerConstants.M_KICKER_LEFT_ID, MotorAlignmentValue.Opposed);
+  private final VoltageOut voltageRequest = new VoltageOut(0);
+  private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
   private final NeutralOut neutralRequest = new NeutralOut();
+
+  private double targetRPS = 0.0;
 
   public Kicker() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -41,6 +47,13 @@ public class Kicker extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.CurrentLimits.SupplyCurrentLimit = Constants.KickerConstants.SUPPLY_CURRENT_LIMIT;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    // --- Velocity PID (Slot 0) ---
+    config.Slot0.kP = Constants.KickerConstants.kP;
+    config.Slot0.kI = Constants.KickerConstants.kI;
+    config.Slot0.kD = Constants.KickerConstants.kD;
+    config.Slot0.kS = Constants.KickerConstants.kS;
+    config.Slot0.kV = Constants.KickerConstants.kV;
 
     // Brake: prevents coasting from accidentally feeding a ball
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -62,10 +75,47 @@ public class Kicker extends SubsystemBase {
     kickerLeftMotor.setControl(dutyCycleRequest.withOutput(percent));
   }
 
+  /**
+   * Spin the kickers to the target speed in rotations per second. Only the left motor is commanded
+   * — the right follows automatically.
+   *
+   * @param rps Target speed (positive = shoot direction)
+   */
+  public void setVelocity(double rps) {
+    targetRPS = rps;
+    kickerLeftMotor.setControl(velocityRequest.withVelocity(rps));
+    // m_leftShooter follows automatically — do NOT call setControl on it here
+  }
+
+  public void setVoltage(double volts) {
+    kickerLeftMotor.setControl(voltageRequest.withOutput(volts));
+  }
+
   public void stop() {
     kickerLeftMotor.setControl(neutralRequest);
     kickerRightMotor.setControl(neutralRequest);
     kickerRightMotor.setControl(followRequest);
+  }
+
+  /**
+   * Returns true when the left motor (and by extension the follower) is within RPS tolerance of the
+   * target. Gate the indexer behind this?
+   */
+  public boolean atSetpoint() {
+    double error = Math.abs(kickerLeftMotor.getClosedLoopError().getValueAsDouble());
+    return targetRPS > 0 && error < Constants.ShooterConstants.TOLERANCE_RPS;
+  }
+
+  public boolean isRunning() {
+    return targetRPS > 0.0;
+  }
+
+  public double getRightVelocityRPS() {
+    return kickerRightMotor.getVelocity().getValueAsDouble();
+  }
+
+  public double getLeftVelocityRPS() {
+    return kickerLeftMotor.getVelocity().getValueAsDouble();
   }
 
   public TalonFX getRightKicker() {
@@ -87,6 +137,7 @@ public class Kicker extends SubsystemBase {
         "Kicker/RightOutputPercent", kickerRightMotor.getDutyCycle().getValueAsDouble());
     SmartDashboard.putNumber(
         "Kicker/RightStatorAmps", kickerRightMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Kicker/TargetRPS", targetRPS);
 
     // Log the same data to the data logger for offline analysis
     Logger.recordOutput(
@@ -97,5 +148,6 @@ public class Kicker extends SubsystemBase {
         "Kicker/RightOutputPercent", kickerRightMotor.getDutyCycle().getValueAsDouble());
     Logger.recordOutput(
         "Kicker/RightStatorAmps", kickerRightMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Kicker/TargetRPS", targetRPS);
   }
 }
