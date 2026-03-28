@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6038674698795177,
-        "y": 1.991518072289158
+        "x": 3.7350000000000003,
+        "y": 2.5869043697527987
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.485867919446801,
-        "y": 1.9576676512289322
+        "x": 2.617000449567284,
+        "y": 2.553053948692573
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.7024457831325304,
-        "y": 1.991518072289158
+        "x": 2.6968674698795176,
+        "y": 2.5869043697527987
       },
       "prevControl": {
-        "x": 2.9570737974871673,
-        "y": 2.02426390576067
+        "x": 3.9514954842341545,
+        "y": 2.6196502032243107
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Bump Final"
     }
   ],
   "rotationTargets": [],
@@ -37,12 +37,19 @@
         "y": 4.035
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.3404466501240692,
+      "minWaypointRelativePos": 0.4178660049627754,
       "maxWaypointRelativePos": 1.0,
       "name": "Point Towards Zone"
     }
   ],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Deploy Intake",
+      "waypointRelativePos": 0.09627791563275481,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -53,7 +60,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 36.86989764584387
+    "rotation": 36.91
   },
   "reversed": false,
   "folder": null,

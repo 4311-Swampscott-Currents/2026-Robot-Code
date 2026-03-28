@@ -148,6 +148,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Deploy Intake", intakeArm.deployCommand());
     NamedCommands.registerCommand("Retract Intake", intakeArm.retractCommand());
     NamedCommands.registerCommand(
+        "Retract/Deploy Intake Repeatedly",
+        Commands.sequence(intakeArm.retractHelpShootCommand(), intakeArm.deployCommand())
+            .repeatedly());
+    NamedCommands.registerCommand(
         "Intake Balls",
         Commands.run(() -> intakeRoller.intake(), intakeRoller)
             .finallyDo(() -> intakeRoller.stop()));
@@ -161,7 +165,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Spin Kicker/Indexer When Shooting",
         Commands.waitUntil(shooter::atSetpoint)
-            .andThen(Commands.waitSeconds(1))
+            .andThen(Commands.waitSeconds(0.2))
             .andThen(
                 Commands.parallel(
                         Commands.run(() -> kicker.kick(), kicker),
@@ -178,14 +182,18 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Spin Kicker/Indexer When Shooting Back/Forward",
         Commands.waitUntil(shooter::atSetpoint)
-            .andThen(Commands.waitSeconds(1))
+            .andThen(Commands.waitSeconds(0.2))
             .andThen(
                 Commands.parallel(
                         Commands.run(() -> kicker.kick(), kicker),
                         Commands.sequence(
-                                Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.1),
-                                Commands.run(() -> hopper.runForward(), hopper).withTimeout(0.25))
-                            .repeatedly())
+                            Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.35),
+                            Commands.sequence(
+                                    Commands.run(() -> hopper.runReverse(), hopper)
+                                        .withTimeout(0.05),
+                                    Commands.run(() -> hopper.runForward(), hopper)
+                                        .withTimeout(0.25))
+                                .repeatedly()))
                     .finallyDo(
                         () -> {
                           kicker.stop();

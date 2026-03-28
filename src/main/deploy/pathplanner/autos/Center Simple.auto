@@ -11,19 +11,25 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Spin Shooter At 50 RPS"
+                  "name": "Spin Shooter"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Spin Kicker/Indexer When Shooting"
+                  "name": "Spin Kicker/Indexer When Shooting Back/Forward"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Retract/Deploy Intake Repeatedly"
                 }
               },
               {
@@ -45,12 +51,6 @@
           "type": "named",
           "data": {
             "name": "Stop Shooting"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Deploy Intake"
           }
         }
       ]

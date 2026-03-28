@@ -138,6 +138,10 @@ public class Kicker extends SubsystemBase {
     SmartDashboard.putNumber(
         "Kicker/RightStatorAmps", kickerRightMotor.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Kicker/TargetRPS", targetRPS);
+    SmartDashboard.putNumber(
+        "Kicker/RightKickerRPS", kickerRightMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Kicker/LeftKickerRPS", kickerLeftMotor.getVelocity().getValueAsDouble());
 
     // Log the same data to the data logger for offline analysis
     Logger.recordOutput(
@@ -149,5 +153,7 @@ public class Kicker extends SubsystemBase {
     Logger.recordOutput(
         "Kicker/RightStatorAmps", kickerRightMotor.getStatorCurrent().getValueAsDouble());
     Logger.recordOutput("Kicker/TargetRPS", targetRPS);
+    Logger.recordOutput("Kicker/RightKickerRPS", kickerRightMotor.getVelocity().getValueAsDouble());
+    Logger.recordOutput("Kicker/LeftKickerRPS", kickerLeftMotor.getVelocity().getValueAsDouble());
   }
 }

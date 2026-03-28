@@ -171,12 +171,14 @@ public final class Constants {
   // Vision
   // -----------------------------------------------------------------------
   public static final class VisionConstants {
-    public static final String LIMELIGHT_NAME = "limelight";
+    public static final String LIMELIGHT_TWO_ONE = "limelight";
+    public static final String LIMELIGHT_Four_One = "limelight-one";
+    public static final String LIMELIGHT_Four_Two = "limelight-two";
 
     // Camera physical properties — measure on the real robot
     public static final double CAMERA_HEIGHT_METERS =
         0.4; // meters off ground *needs to be updated!
-    public static final double CAMERA_PITCH_DEGREES = 15.0; // upward tilt — MEASURE!
+    public static final double CAMERA_PITCH_DEGREES = 3.0; // upward tilt — MEASURE!
 
     // Height of the scoring target center in meters off the ground.
     public static final double TARGET_HEIGHT_METERS = Units.inchesToMeters(44.25);
@@ -261,7 +263,7 @@ public final class Constants {
     static {
       // SHOT_MAP.put(1.5, 25.0);
       // SHOT_MAP.put(2.0, 25.0);
-      SHOT_MAP.put(1.69, 40.0);
+      SHOT_MAP.put(1.69, 42.0); // needs to be tested
       SHOT_MAP.put(1.87, 43.20);
       SHOT_MAP.put(2.0, 45.0);
       SHOT_MAP.put(2.3, 47.11);

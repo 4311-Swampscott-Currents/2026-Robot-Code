@@ -174,7 +174,7 @@ public class Shooter extends SubsystemBase {
     return Commands.run(
             () -> {
               double rps = AutoAimCommands.interpolateRPS(vision.getDistanceMeters());
-              targetRPS = rps; // unused?
+              targetRPS = rps;
               setVelocity(rps);
             })
         .finallyDo(() -> this.stop());

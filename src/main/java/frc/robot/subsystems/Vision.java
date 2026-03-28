@@ -92,7 +92,7 @@ public class Vision extends SubsystemBase {
    */
   public void enableTargetTagFilter() {
     LimelightHelpers.SetFiducialIDFiltersOverride(
-        Constants.VisionConstants.LIMELIGHT_NAME, new int[] {getTargetTagID()});
+        Constants.VisionConstants.LIMELIGHT_TWO_ONE, new int[] {getTargetTagID()});
   }
 
   /**
@@ -101,7 +101,7 @@ public class Vision extends SubsystemBase {
    */
   public void disableTargetTagFilter() {
     LimelightHelpers.SetFiducialIDFiltersOverride(
-        Constants.VisionConstants.LIMELIGHT_NAME, Constants.VisionConstants.ALL_TAG_IDS);
+        Constants.VisionConstants.LIMELIGHT_TWO_ONE, Constants.VisionConstants.ALL_TAG_IDS);
   }
 
   // -----------------------------------------------------------------------
@@ -118,8 +118,9 @@ public class Vision extends SubsystemBase {
    * heading rather than rotating blindly.
    */
   public boolean hasTarget() {
-    if (!LimelightHelpers.getTV(Constants.VisionConstants.LIMELIGHT_NAME)) return false;
-    int trackedID = (int) LimelightHelpers.getFiducialID(Constants.VisionConstants.LIMELIGHT_NAME);
+    if (!LimelightHelpers.getTV(Constants.VisionConstants.LIMELIGHT_TWO_ONE)) return false;
+    int trackedID =
+        (int) LimelightHelpers.getFiducialID(Constants.VisionConstants.LIMELIGHT_TWO_ONE);
     return trackedID == getTargetTagID();
   }
 
@@ -146,7 +147,7 @@ public class Vision extends SubsystemBase {
    * diagnostics — aiming uses getAngleToTarget() instead.
    */
   public double getTX() {
-    return LimelightHelpers.getTX(Constants.VisionConstants.LIMELIGHT_NAME);
+    return LimelightHelpers.getTX(Constants.VisionConstants.LIMELIGHT_TWO_ONE);
   }
 
   /**
@@ -154,7 +155,7 @@ public class Vision extends SubsystemBase {
    * distance fallback.
    */
   public double getTY() {
-    return LimelightHelpers.getTY(Constants.VisionConstants.LIMELIGHT_NAME);
+    return LimelightHelpers.getTY(Constants.VisionConstants.LIMELIGHT_TWO_ONE);
   }
 
   /**
@@ -162,7 +163,7 @@ public class Vision extends SubsystemBase {
    * getTargetTagID() during testing.
    */
   public int getTrackedTagID() {
-    return (int) LimelightHelpers.getFiducialID(Constants.VisionConstants.LIMELIGHT_NAME);
+    return (int) LimelightHelpers.getFiducialID(Constants.VisionConstants.LIMELIGHT_TWO_ONE);
   }
 
   // -----------------------------------------------------------------------

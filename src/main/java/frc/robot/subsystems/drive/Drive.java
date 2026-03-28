@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
@@ -65,11 +66,19 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   public static final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
-  public static final NetworkTable limelightTable = ntInstance.getTable("limelight");
+  public static final NetworkTable limelightTableTwoOne =
+      ntInstance.getTable(Constants.VisionConstants.LIMELIGHT_TWO_ONE);
+  public static final NetworkTable limelightTableFourOne =
+      ntInstance.getTable(Constants.VisionConstants.LIMELIGHT_Four_One);
+  public static final NetworkTable limelightTableFourTwo =
+      ntInstance.getTable(Constants.VisionConstants.LIMELIGHT_Four_Two);
+
   public static double tx;
   public static double currentRotation;
   public static double newRotation;
-  public static boolean isConnected;
+  public static boolean isConnectedTwoOne;
+  public static boolean isConnectedFourOne;
+  public static boolean isConnectedFourTwo;
 
   // PathPlanner config constants
   private static final double ROBOT_MASS_KG = 74.088;
@@ -382,56 +391,84 @@ public class Drive extends SubsystemBase {
           modules[3].getPosition() // br
         });
 
-    boolean useMegaTag2 = true; // set to false to use MegaTag1
-    boolean doRejectUpdate = false;
+    boolean doRejectUpdateTwoOne = false;
+    boolean doRejectUpdateFourOne = false;
+    boolean doRejectUpdateFourTwo = false;
 
     // checks if limelight is connected
-    isConnected = limelightTable.getEntry("tv").exists();
+    isConnectedTwoOne = limelightTableTwoOne.getEntry("tv").exists();
+    isConnectedFourOne = limelightTableFourOne.getEntry("tv").exists();
+    isConnectedFourTwo = limelightTableFourTwo.getEntry("tv").exists();
 
-    if (useMegaTag2 == false) {
-      LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    // updates pose from original limelight 2+
+    LimelightHelpers.SetRobotOrientation(
+        VisionConstants.LIMELIGHT_TWO_ONE,
+        poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        0,
+        0,
+        0,
+        0,
+        0);
+    LimelightHelpers.PoseEstimate mt2FromTwoOne =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(
+            Constants.VisionConstants.LIMELIGHT_TWO_ONE);
 
-      if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
-        if (mt1.rawFiducials[0].ambiguity > .7) {
-          doRejectUpdate = true;
-        }
-        if (mt1.rawFiducials[0].distToCamera > 3) {
-          doRejectUpdate = true;
-        }
-      }
-      if (mt1.tagCount == 0) {
-        doRejectUpdate = true;
-      }
+    // updates pose from original limelight 4 #1
+    LimelightHelpers.SetRobotOrientation(
+        VisionConstants.LIMELIGHT_Four_One,
+        poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        0,
+        0,
+        0,
+        0,
+        0);
+    LimelightHelpers.PoseEstimate mt2FromFourOne =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(
+            Constants.VisionConstants.LIMELIGHT_Four_One);
 
-      if (!doRejectUpdate) {
-        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-        poseEstimator.addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
-      }
-    } else if (useMegaTag2 == true) {
-      LimelightHelpers.SetRobotOrientation(
-          "limelight",
-          poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-          0,
-          0,
-          0,
-          0,
-          0);
-      LimelightHelpers.PoseEstimate mt2 =
-          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-      if (Math.abs(gyroInputs.yawVelocityRadPerSec)
-          > Math.toRadians(
-              720)) // if our angular velocity is greater than 720 degrees per second, ignore vision
-      // updates
-      {
-        doRejectUpdate = true;
-      }
-      if (mt2 == null || mt2.tagCount == 0) {
-        doRejectUpdate = true;
-      }
-      if (!doRejectUpdate) {
-        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-        poseEstimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
-      }
+    // updates pose from original limelight 4 #2
+    LimelightHelpers.SetRobotOrientation(
+        VisionConstants.LIMELIGHT_Four_Two,
+        poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+        0,
+        0,
+        0,
+        0,
+        0);
+    LimelightHelpers.PoseEstimate mt2FromFourTwo =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(
+            Constants.VisionConstants.LIMELIGHT_Four_Two);
+
+    if (Math.abs(gyroInputs.yawVelocityRadPerSec)
+        > Math.toRadians(
+            720)) // if our angular velocity is greater than 720 degrees per second, ignore vision
+    // updates
+    {
+      doRejectUpdateTwoOne = true;
+      doRejectUpdateFourOne = true;
+      doRejectUpdateFourTwo = true;
+    }
+    if (mt2FromTwoOne == null || mt2FromTwoOne.tagCount == 0) {
+      doRejectUpdateTwoOne = true;
+    }
+    if (mt2FromFourOne == null || mt2FromFourOne.tagCount == 0) {
+      doRejectUpdateFourOne = true;
+    }
+    if (mt2FromFourTwo == null || mt2FromFourTwo.tagCount == 0) {
+      doRejectUpdateFourTwo = true;
+    }
+
+    if (!doRejectUpdateTwoOne) {
+      poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+      poseEstimator.addVisionMeasurement(mt2FromTwoOne.pose, mt2FromTwoOne.timestampSeconds);
+    }
+    if (!doRejectUpdateFourOne) {
+      poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+      poseEstimator.addVisionMeasurement(mt2FromFourOne.pose, mt2FromFourOne.timestampSeconds);
+    }
+    if (!doRejectUpdateFourTwo) {
+      poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+      poseEstimator.addVisionMeasurement(mt2FromFourTwo.pose, mt2FromFourTwo.timestampSeconds);
     }
   }
 }

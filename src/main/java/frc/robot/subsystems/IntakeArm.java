@@ -252,6 +252,16 @@ public class IntakeArm extends SubsystemBase {
             });
   }
 
+  public Command retractHelpShootCommand() {
+    return Commands.run(this::runRetract, this)
+        .until(this::isAtShooterHelperStop)
+        .finallyDo(
+            () -> {
+              stop();
+              currentState = ArmState.RETRACTED;
+            });
+  }
+
   /**
    * Moves the arm at a manually specified duty cycle. Useful for tuning DEPLOY_DUTY_CYCLE /
    * RETRACT_DUTY_CYCLE constants, or as an operator override if auto stop detection is unreliable.

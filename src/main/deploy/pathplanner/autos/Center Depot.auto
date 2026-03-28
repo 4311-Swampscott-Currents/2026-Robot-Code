@@ -17,13 +17,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Spin Shooter At 50 RPS"
+                  "name": "Spin Shooter"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Spin Kicker/Indexer When Shooting"
+                  "name": "Spin Kicker/Indexer When Shooting Back/Forward"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Retract/Deploy Intake Repeatedly"
                 }
               },
               {
@@ -48,12 +54,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Deploy Intake"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Collect Depot Middle"
@@ -73,6 +73,12 @@
                 "type": "named",
                 "data": {
                   "name": "Spin Kicker/Indexer When Shooting Back/Forward"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Retract/Deploy Intake Repeatedly"
                 }
               },
               {

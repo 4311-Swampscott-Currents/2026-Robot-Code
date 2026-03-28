@@ -11,7 +11,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -23,16 +23,34 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Deploy Intake"
+                  "name": "Spin Kicker/Indexer When Shooting"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Spin Kicker/Indexer When Shooting"
+                  "name": "Retract/Deploy Intake Repeatedly"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Kicker and Indexer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Spin Shooter"
           }
         }
       ]

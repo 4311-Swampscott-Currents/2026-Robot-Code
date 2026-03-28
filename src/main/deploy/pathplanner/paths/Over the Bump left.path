@@ -142,7 +142,7 @@
   "eventMarkers": [
     {
       "name": "Deploy Intake",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -153,7 +153,7 @@
     },
     {
       "name": "Intake Balls",
-      "waypointRelativePos": 1.830396475770925,
+      "waypointRelativePos": 1.506699751861046,
       "endWaypointRelativePos": 5.255474452554749,
       "command": {
         "type": "named",
