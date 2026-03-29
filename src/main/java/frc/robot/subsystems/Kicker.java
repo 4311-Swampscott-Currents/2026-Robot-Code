@@ -58,6 +58,8 @@ public class Kicker extends SubsystemBase {
     // Brake: prevents coasting from accidentally feeding a ball
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    config.Feedback.SensorToMechanismRatio = 3;
+
     kickerLeftMotor.getConfigurator().apply(config);
 
     kickerRightMotor.getConfigurator().apply(config);

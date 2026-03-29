@@ -324,7 +324,7 @@ public class RobotContainer {
             Commands.waitUntil(shooter::atSetpoint)
                 .andThen(
                     Commands.parallel(
-                            Commands.run(() -> kicker.kick(), kicker),
+                            Commands.run(() -> kicker.setVelocity(33), kicker),
                             Commands.sequence(
                                 Commands.run(() -> hopper.runReverse(), hopper).withTimeout(0.35),
                                 Commands.sequence(

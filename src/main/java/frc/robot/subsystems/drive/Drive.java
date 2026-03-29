@@ -227,6 +227,13 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
+    if (DriverStation.isDisabled()) {
+      LimelightHelpers.SetThrottle(Constants.VisionConstants.LIMELIGHT_Four_One, 100);
+      LimelightHelpers.SetThrottle(Constants.VisionConstants.LIMELIGHT_Four_Two, 100);
+    } else {
+      LimelightHelpers.SetThrottle(Constants.VisionConstants.LIMELIGHT_Four_One, 0);
+      LimelightHelpers.SetThrottle(Constants.VisionConstants.LIMELIGHT_Four_Two, 0);
+    }
     // update
     this.updateOdometry();
   }
