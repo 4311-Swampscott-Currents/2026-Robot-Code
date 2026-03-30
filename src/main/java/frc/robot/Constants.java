@@ -267,7 +267,7 @@ public final class Constants {
       SHOT_MAP.put(1.87, 44.20);
       SHOT_MAP.put(2.0, 45.0);
       SHOT_MAP.put(2.3, 47.11);
-      SHOT_MAP.put(2.6, 51.0);
+      SHOT_MAP.put(2.6, 50.0);
       SHOT_MAP.put(3.0, 53.0);
       SHOT_MAP.put(3.3, 54.0);
       SHOT_MAP.put(3.5, 55.0);

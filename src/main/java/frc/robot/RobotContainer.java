@@ -399,9 +399,7 @@ public class RobotContainer {
     driverController
         .rightTrigger()
         .whileTrue(
-            Commands.run(
-                    () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0)),
-                    shooter)
+            Commands.run(() -> shooter.setVelocity(shooter.selectedVelocityChooser()), shooter)
                 .finallyDo(() -> shooter.stop()));
 
     // plays music
@@ -413,20 +411,20 @@ public class RobotContainer {
     //                 .onlyWhile(() -> DriverStation.isDisabled())
     //                 .finallyDo(() -> orchestra.stop())
     //                 );
-    driverController
-        .start()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  orchestra.sing();
-                  m_pdh.setSwitchableChannel(true);
-                }))
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  orchestra.stop();
-                  m_pdh.setSwitchableChannel(false);
-                }));
+    // driverController
+    //     .start()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               orchestra.sing();
+    //               m_pdh.setSwitchableChannel(true);
+    //             }))
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               orchestra.stop();
+    //               m_pdh.setSwitchableChannel(false);
+    //             }));
   }
 
   public Pose2d updatePose() {
