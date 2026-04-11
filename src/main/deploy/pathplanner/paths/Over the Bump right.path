@@ -37,7 +37,7 @@
       },
       "prevControl": {
         "x": 7.360274868171287,
-        "y": 0.6883953500989971
+        "y": 0.688395350098997
       },
       "nextControl": {
         "x": 8.086162237465311,
@@ -144,7 +144,12 @@
       "name": "Deploy Intake",
       "waypointRelativePos": 0.42282878411910296,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Deploy Intake"
+        }
+      }
     },
     {
       "name": "Intake Balls",

@@ -48,11 +48,11 @@ public final class Constants {
 
     // Velocity PID (Phoenix 6 Slot 0) — units: rot/sec
     // kV is the most critical gain. Characterize first via SysId or manual sweep.
-    public static final double kP = 0.80;
+    public static final double kP = 0.40;
     public static final double kI = 0.00;
     public static final double kD = 0.00;
     public static final double kS = 0.2; // static friction (volts)
-    public static final double kV = 0.12643; // volts per rot/sec — TUNE THIS
+    public static final double kV = 0.116107; // volts per rot/sec — TUNE THIS
 
     // "At speed" tolerance (~50 RPM expressed in rot/sec)
     public static final double TOLERANCE_RPS = 120.0 / 60.0;
@@ -264,13 +264,16 @@ public final class Constants {
       // SHOT_MAP.put(1.5, 25.0);
       // SHOT_MAP.put(2.0, 25.0);
       SHOT_MAP.put(1.69, 43.0); // needs to be tested
-      SHOT_MAP.put(1.87, 44.20);
-      SHOT_MAP.put(2.0, 45.0);
-      SHOT_MAP.put(2.3, 47.11);
-      SHOT_MAP.put(2.6, 50.0);
-      SHOT_MAP.put(3.0, 53.0);
-      SHOT_MAP.put(3.3, 54.0);
-      SHOT_MAP.put(3.5, 55.0);
+      SHOT_MAP.put(1.86, 44.40);
+      SHOT_MAP.put(2.0, 44.75);
+      SHOT_MAP.put(2.3, 46.0);
+      SHOT_MAP.put(2.44, 46.8);
+      SHOT_MAP.put(2.5, 47.0);
+      SHOT_MAP.put(2.6, 48.0);
+      SHOT_MAP.put(3.0, 49.3);
+      SHOT_MAP.put(3.3, 51.9);
+      SHOT_MAP.put(3.5, 53.0);
+      SHOT_MAP.put(3.6, 54.0);
       SHOT_MAP.put(3.8, 57.0); // needs to be adjusted
       SHOT_MAP.put(4.0, 58.0);
       SHOT_MAP.put(4.2, 59.0); // needs to be tested
@@ -286,6 +289,10 @@ public final class Constants {
   public final class ClimberConstants {
 
     public static final float CLIMBER_MOTOR_ID = 4311; // TEMP
+
+    // lol
+    // lingan guli guli guli watah lingangu lingangu
+    // lingan guil guli guli watah lingangu lingangu
   }
 
   // -----------------------------------------------------------------------

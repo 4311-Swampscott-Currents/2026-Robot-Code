@@ -149,7 +149,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Retract Intake", intakeArm.retractCommand());
     NamedCommands.registerCommand(
         "Retract/Deploy Intake Repeatedly",
-        Commands.sequence(intakeArm.retractHelpShootCommand(), intakeArm.deployCommand())
+        Commands.sequence(
+                intakeArm.retractHelpShootCommand(),
+                Commands.waitSeconds(0.1) /*intakeArm.deployCommand()*/)
             .repeatedly());
     NamedCommands.registerCommand(
         "Intake Balls",
@@ -399,7 +401,9 @@ public class RobotContainer {
     driverController
         .rightTrigger()
         .whileTrue(
-            Commands.run(() -> shooter.setVelocity(shooter.selectedVelocityChooser()), shooter)
+            Commands.run(
+                    () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0)),
+                    shooter)
                 .finallyDo(() -> shooter.stop()));
 
     // plays music
