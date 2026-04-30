@@ -79,6 +79,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     field.setRobotPose(robotContainer.updatePose());
+
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
     // Threads.setCurrentThreadPriority(true, 99);

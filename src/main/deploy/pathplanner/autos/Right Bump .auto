@@ -33,6 +33,12 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "Intake Balls"
+                }
+              },
+              {
                 "type": "wait",
                 "data": {
                   "waitTime": 3.5

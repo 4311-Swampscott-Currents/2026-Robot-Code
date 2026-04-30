@@ -230,9 +230,13 @@ public class Drive extends SubsystemBase {
     if (DriverStation.isDisabled()) {
       LimelightHelpers.SetThrottle(Constants.VisionConstants.LIMELIGHT_Four_One, 100);
       LimelightHelpers.SetThrottle(Constants.VisionConstants.LIMELIGHT_Four_Two, 100);
+      LimelightHelpers.SetIMUMode(Constants.VisionConstants.LIMELIGHT_Four_One, 1);
+      LimelightHelpers.SetIMUMode(Constants.VisionConstants.LIMELIGHT_Four_Two, 1);
     } else {
       LimelightHelpers.SetThrottle(Constants.VisionConstants.LIMELIGHT_Four_One, 0);
       LimelightHelpers.SetThrottle(Constants.VisionConstants.LIMELIGHT_Four_Two, 0);
+      LimelightHelpers.SetIMUMode(Constants.VisionConstants.LIMELIGHT_Four_One, 0);
+      LimelightHelpers.SetIMUMode(Constants.VisionConstants.LIMELIGHT_Four_Two, 0);
     }
     // update
     this.updateOdometry();
@@ -477,5 +481,20 @@ public class Drive extends SubsystemBase {
       poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
       poseEstimator.addVisionMeasurement(mt2FromFourTwo.pose, mt2FromFourTwo.timestampSeconds);
     }
+  }
+
+  /**
+   * Returns the reset rotation
+   *
+   * <p>Red: 180
+   *
+   * <p>Blue: 0
+   */
+  public Rotation2d resetRotation() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+      return Rotation2d.k180deg;
+    }
+    return Rotation2d.kZero;
   }
 }

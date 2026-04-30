@@ -96,6 +96,22 @@
     },
     {
       "anchor": {
+        "x": 3.560156626506024,
+        "y": 5.587
+      },
+      "prevControl": {
+        "x": 3.8101558910801856,
+        "y": 5.5863936070760065
+      },
+      "nextControl": {
+        "x": 3.3101573619318625,
+        "y": 5.587606392923993
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
         "x": 2.697,
         "y": 5.587
       },
@@ -129,8 +145,8 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.8754342431761644,
+      "minWaypointRelativePos": 0.22034739454094396,
+      "maxWaypointRelativePos": 0.8039702233250654,
       "constraints": {
         "maxVelocity": 1.0,
         "maxAcceleration": 1.0,
@@ -148,8 +164,8 @@
         "y": 4.035
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 5.7,
-      "maxWaypointRelativePos": 6.0,
+      "minWaypointRelativePos": 6.4,
+      "maxWaypointRelativePos": 7.0,
       "name": "Point Towards Zone"
     }
   ],
@@ -175,6 +191,17 @@
           "name": "Intake Balls"
         }
       }
+    },
+    {
+      "name": "Deploy Intake",
+      "waypointRelativePos": 1.5186104218362153,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Deploy Intake"
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -187,13 +214,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -38.830000000000005
+    "rotation": -36.677
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -38.830000000000005
+    "rotation": -36.677
   },
   "useDefaultConstraints": true
 }

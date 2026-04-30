@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Over the Bump left"
+            "pathName": "CenterToTower"
           }
         },
         {
@@ -41,7 +41,62 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 3.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Kicker and Indexer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Shooting"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of Collect Depot Middle"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Kicker/Indexer When Shooting Back/Forward"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Retract/Deploy Intake Repeatedly"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Balls"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
                 }
               }
             ]

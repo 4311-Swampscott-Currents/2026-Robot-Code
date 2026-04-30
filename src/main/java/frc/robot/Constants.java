@@ -133,7 +133,7 @@ public final class Constants {
     // Duty cycle for movement
     // With 125:1 even a small duty cycle produces enormous torque
     // Start very low and increase carefully — the arm will be powerful
-    public static final double DEPLOY_DUTY_CYCLE = 0.2; // TUNE! — start low with 125:1
+    public static final double DEPLOY_DUTY_CYCLE = 0.3; // TUNE! — start low with 125:1
     public static final double RETRACT_DUTY_CYCLE = -0.12; // TUNE!
 
     // ── Stop detection ────────────────────────────────────────────────
@@ -263,25 +263,27 @@ public final class Constants {
     static {
       // SHOT_MAP.put(1.5, 25.0);
       // SHOT_MAP.put(2.0, 25.0);
-      SHOT_MAP.put(1.69, 43.0); // needs to be tested
-      SHOT_MAP.put(1.86, 44.40);
-      SHOT_MAP.put(2.0, 44.75);
-      SHOT_MAP.put(2.3, 46.0);
-      SHOT_MAP.put(2.44, 46.8);
-      SHOT_MAP.put(2.5, 47.0);
-      SHOT_MAP.put(2.6, 48.0);
-      SHOT_MAP.put(3.0, 49.3);
-      SHOT_MAP.put(3.3, 51.9);
-      SHOT_MAP.put(3.5, 53.0);
-      SHOT_MAP.put(3.6, 54.0);
-      SHOT_MAP.put(3.8, 57.0); // needs to be adjusted
-      SHOT_MAP.put(4.0, 58.0);
-      SHOT_MAP.put(4.2, 59.0); // needs to be tested
-      SHOT_MAP.put(4.5, 60.0);
-      SHOT_MAP.put(4.8, 62.0); // needs to be tuned
-      SHOT_MAP.put(5.0, 63.23);
-      SHOT_MAP.put(5.2, 65.0); // needs to be tuned
-      SHOT_MAP.put(5.5, 66.32);
+      // SHOT_MAP.put(1.69, 43.0); // needs to be tested
+      SHOT_MAP.put(1.75, 41.0);
+      SHOT_MAP.put(2.05, 43.8);
+      SHOT_MAP.put(2.25, 44.35);
+      // SHOT_MAP.put(2.3, 45.05);
+      // SHOT_MAP.put(2.44, 45.75);
+      SHOT_MAP.put(2.47, 45.2);
+      SHOT_MAP.put(2.5, 46.05);
+      SHOT_MAP.put(2.75, 47.55);
+      SHOT_MAP.put(3.0, 48.25);
+      SHOT_MAP.put(3.3, 50.0);
+      SHOT_MAP.put(3.55, 50.8);
+      // SHOT_MAP.put(3.6, 52.05);
+      SHOT_MAP.put(3.75, 52.65); // needs to be adjusted
+      SHOT_MAP.put(4.0, 53.45);
+      SHOT_MAP.put(4.2, 58.05); // needs to be tested
+      SHOT_MAP.put(4.5, 59.05);
+      SHOT_MAP.put(4.8, 61.05); // needs to be tuned
+      SHOT_MAP.put(5.0, 62.28);
+      SHOT_MAP.put(5.2, 63.05); // needs to be tuned
+      SHOT_MAP.put(5.5, 65.37);
       // SHOT_MAP.put(4.0, 25.0);
     }
   }

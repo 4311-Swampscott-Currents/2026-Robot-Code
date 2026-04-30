@@ -33,9 +33,15 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "Intake Balls"
+                }
+              },
+              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.0
+                  "waitTime": 3.0
                 }
               }
             ]
@@ -79,6 +85,12 @@
                 "type": "named",
                 "data": {
                   "name": "Retract/Deploy Intake Repeatedly"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Balls"
                 }
               },
               {

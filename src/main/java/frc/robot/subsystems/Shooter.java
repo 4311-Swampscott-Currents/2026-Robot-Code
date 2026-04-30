@@ -77,6 +77,7 @@ public class Shooter extends SubsystemBase {
     velocityChooser.addOption("70", 70.0);
     velocityChooser.addOption("80", 80.0);
     velocityChooser.addOption("90", 90.0);
+    velocityChooser.addOption("100", 100.0);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 

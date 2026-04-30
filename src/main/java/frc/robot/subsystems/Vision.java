@@ -47,6 +47,8 @@ public class Vision extends SubsystemBase {
   public Vision(Drive drive) {
     this.drive = drive;
     String limelightURL = "http://10.43.11.11:5800/stream.mjpg";
+    LimelightHelpers.SetIMUAssistAlpha(Constants.VisionConstants.LIMELIGHT_Four_One, 0.01);
+    LimelightHelpers.SetIMUAssistAlpha(Constants.VisionConstants.LIMELIGHT_Four_Two, 0.01);
     SmartDashboard.putString("Limelight Stream", limelightURL);
   }
 
@@ -291,6 +293,32 @@ public class Vision extends SubsystemBase {
         / Math.tan(angleRadians);
   }
 
+  public Rotation2d getAngleToTargetRawFiducial() {
+    int targetID = getTargetTagID();
+
+    LimelightHelpers.RawFiducial[] fiducials =
+        LimelightHelpers.getRawFiducials(Constants.VisionConstants.LIMELIGHT_Four_One);
+
+    for (LimelightHelpers.RawFiducial fiducial : fiducials) {
+      if (fiducial.id != targetID) continue;
+
+      if (fiducial.ambiguity > 0.5) continue;
+
+      double txnc = fiducial.txnc;
+
+      double offsetDegrees = 0.0;
+
+      if (fiducial.distToRobot > 0.1) {
+        offsetDegrees =
+            Math.toDegrees(
+                Math.atan(Constants.VisionConstants.HUB_HALF_DEPTH_METERS / fiducial.distToRobot));
+      }
+
+      return Rotation2d.fromDegrees(txnc + offsetDegrees);
+    }
+    return Rotation2d.kZero;
+  }
+
   // -----------------------------------------------------------------------
   // Periodic
   // -----------------------------------------------------------------------
@@ -314,6 +342,7 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber(
         "Vision/TXHubOffsetDeg", txOffsetDegrees); // how much TX is being corrected
     SmartDashboard.putBoolean("Vision/InsideAllianceZone", inAllianceZone());
+    SmartDashboard.putNumber("Vision/txnc", getAngleToTargetRawFiducial().getDegrees());
 
     // Log the same data to the data logger for offline analysis
     Logger.recordOutput("Vision/HasTarget", hasTarget());
@@ -326,5 +355,8 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("Vision/AngleTXDeg", getAngleToTargetTX().getDegrees());
     Logger.recordOutput("Vision/TXHubOffsetDeg", txOffsetDegrees);
     Logger.recordOutput("Vision/InsideAllianceZone", inAllianceZone());
+    Logger.recordOutput("Vision/txnc", getAngleToTargetRawFiducial().getDegrees());
+    // Logger.record("Vision/IMUmodeLL1",
+    // LimelightHelpers.getIMUData(Constants.VisionConstants.LIMELIGHT_Four_One));
   }
 }

@@ -12,15 +12,15 @@
         "y": 4.015592011412268
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterStart"
     },
     {
       "anchor": {
-        "x": 2.935,
+        "x": 2.4,
         "y": 4.035
       },
       "prevControl": {
-        "x": 3.5862054208273886,
+        "x": 3.0512054208273884,
         "y": 4.067346647646221
       },
       "nextControl": null,

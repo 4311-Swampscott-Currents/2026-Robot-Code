@@ -1,0 +1,129 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.4,
+        "y": 4.035
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.2165060240963856,
+        "y": 4.340975903614458
+      },
+      "isLocked": false,
+      "linkedName": "CenterFinalPose"
+    },
+    {
+      "anchor": {
+        "x": 2.697,
+        "y": 5.587
+      },
+      "prevControl": {
+        "x": 2.4470181627793552,
+        "y": 5.583986520318445
+      },
+      "nextControl": {
+        "x": 2.9469818372206436,
+        "y": 5.590013479681555
+      },
+      "isLocked": false,
+      "linkedName": "Left Bump Final"
+    },
+    {
+      "anchor": {
+        "x": 5.986108433734939,
+        "y": 5.587
+      },
+      "prevControl": {
+        "x": 5.986108433734939,
+        "y": 5.836999999999996
+      },
+      "nextControl": {
+        "x": 5.986108433734939,
+        "y": 5.337
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.986108433734939,
+        "y": 4.035
+      },
+      "prevControl": {
+        "x": 6.018891566265061,
+        "y": 4.330048192771085
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -65.87233351618488
+    },
+    {
+      "waypointRelativePos": 2.2730290456431472,
+      "rotationDegrees": -90.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.625,
+        "y": 4.035
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 0.75,
+      "name": "Point Towards Zone"
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "Deploy Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Deploy Intake"
+        }
+      }
+    },
+    {
+      "name": "Intake Balls",
+      "waypointRelativePos": 1.6883374689826347,
+      "endWaypointRelativePos": 3.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake Balls"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

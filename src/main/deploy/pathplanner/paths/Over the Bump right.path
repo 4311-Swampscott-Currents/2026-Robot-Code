@@ -100,8 +100,8 @@
         "y": 2.5869043697527987
       },
       "prevControl": {
-        "x": 2.9747459773096345,
-        "y": 2.7694603349469853
+        "x": 3.3634578313253014,
+        "y": 2.8329518072289157
       },
       "nextControl": null,
       "isLocked": false,
@@ -134,7 +134,7 @@
         "y": 4.035
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 5.656387665198234,
+      "minWaypointRelativePos": 5.65,
       "maxWaypointRelativePos": 6.0,
       "name": "Point Towards Zone"
     }
@@ -142,7 +142,7 @@
   "eventMarkers": [
     {
       "name": "Deploy Intake",
-      "waypointRelativePos": 0.42282878411910296,
+      "waypointRelativePos": 0.4,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -173,7 +173,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 36.91
+    "rotation": 36.352
   },
   "reversed": false,
   "folder": null,

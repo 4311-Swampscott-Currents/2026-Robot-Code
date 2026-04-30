@@ -56,6 +56,7 @@ public class RobotContainer {
   private final Vision vision;
   private final MySingingMotors orchestra;
   private final PowerDistribution m_pdh;
+  private final Rotation2d resetRotation = Rotation2d.kZero;
 
   // private static Pose2d robotPose;
 
@@ -284,7 +285,7 @@ public class RobotContainer {
             Commands.runOnce(
                     () ->
                         drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                            new Pose2d(drive.getPose().getTranslation(), drive.resetRotation())),
                     drive)
                 .ignoringDisable(true));
 
@@ -402,7 +403,10 @@ public class RobotContainer {
         .rightTrigger()
         .whileTrue(
             Commands.run(
-                    () -> shooter.setVelocity(SmartDashboard.getNumber("Shooter/TestRPS", 0)),
+                    () ->
+                        shooter.setVelocity(
+                            /*SmartDashboard.getNumber("Shooter/TestRPS", 0)*/
+                            shooter.selectedVelocityChooser()),
                     shooter)
                 .finallyDo(() -> shooter.stop()));
 
