@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.689714693295292,
-        "y": 5.154194008559203
+        "x": 1.7680120481927712,
+        "y": 5.215192771084337
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.489012048192771,
-        "y": 5.761578313253012
+        "x": 2.567309403090251,
+        "y": 5.822577075778146
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left shoot end"
     },
     {
       "anchor": {
@@ -52,8 +52,8 @@
         "y": 4.636024096385543
       },
       "prevControl": {
-        "x": 7.734443195381111,
-        "y": 4.46861481593625
+        "x": 7.7344431953811155,
+        "y": 4.468614815936245
       },
       "nextControl": {
         "x": 6.882180722891565,
@@ -161,7 +161,7 @@
   "folder": "Rafael's Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -22.7
   },
   "useDefaultConstraints": true
 }

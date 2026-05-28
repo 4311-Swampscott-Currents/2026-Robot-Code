@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "itty bitty start right shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Shooting"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "over the bump right straight"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Rafael's Autos",
+  "choreoAuto": false
+}

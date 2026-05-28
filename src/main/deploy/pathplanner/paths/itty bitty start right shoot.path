@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6038674698795177,
-        "y": 5.532096385542169
+        "x": 3.647578313253012,
+        "y": 2.6034698795180726
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9263493975903616,
-        "y": 5.88178313253012
+        "x": 2.7141669800845136,
+        "y": 2.3520298555163137
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.7680120481927712,
-        "y": 5.215192771084337
+        "x": 2.303469879518072,
+        "y": 3.7508795180722894
       },
       "prevControl": {
-        "x": 2.893566265060242,
-        "y": 5.078596385542168
+        "x": 2.8362919427827062,
+        "y": 3.5989065322539795
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right shoot end"
     }
   ],
   "rotationTargets": [],
@@ -37,12 +37,24 @@
         "y": 4.025
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.5071960297766697,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0.2550868486352368,
+      "maxWaypointRelativePos": 0.75,
       "name": "Point Towards Zone"
     }
   ],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Spin Shooter",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Spin Shooter"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -53,7 +65,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -22.7
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Rafael's Paths",
